@@ -96,9 +96,12 @@ done
 
 ```bash
 # 수집한 데이터 시각화
-python -m lerobot.serve_dataset \
-    --dataset.repo_id=${HF_USER}/${TASK_NAME} \
-    --port=8080
+lerobot-dataset-viz \
+    --repo-id=${HF_USER}/${TASK_NAME} \
+    --episode-index=0 \
+    --mode=distant \
+    --web-port=8080
+
 
 # 브라우저에서 http://localhost:8080 접속
 ```
