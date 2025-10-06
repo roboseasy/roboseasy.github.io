@@ -123,7 +123,7 @@ lerobot-record \
         wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
         belly: {type: opencv, index_or_path: 6, width: 640, height: 480, fps: 25},
     }' \
-    --dataset.repo_id=${HF_USER}/so101_vis \
+    --dataset.repo_id=${HF_USER}/${TASK_NAME} \
     --dataset.num_episodes=25 \
     --dataset.single_task=${TASK_NAME} \
     --display_data=true
@@ -220,7 +220,7 @@ lerobot-replay \
     --robot.type=so101_follower \
     --robot.port=/dev/ttyACM1 \
     --robot.id=follower \
-    --dataset.repo_id=${HF_USER}/so101_pick_place \
+    --dataset.repo_id=${HF_USER}/${TASK_NAME} \
     --dataset.episode=0
 ```
 
@@ -231,7 +231,7 @@ lerobot-replay \
     --robot.type=so101_follower \
     --robot.port=/dev/ttyACM1 \
     --robot.id=follower \
-    --dataset.repo_id=${HF_USER}/so101_pick_place \
+    --dataset.repo_id=${HF_USER}/${TASK_NAME} \
     --dataset.episode=5 \
     --dataset.fps=30
 ```
@@ -245,7 +245,7 @@ lerobot-replay \
     --robot.type=so101_follower \
     --robot.port=/dev/ttyACM1 \
     --robot.id=follower \
-    --dataset.repo_id=${HF_USER}/so101_pick_place \
+    --dataset.repo_id=${HF_USER}/${TASK_NAME} \
     --dataset.root=./local_datasets \
     --dataset.episode=0
 ```
@@ -262,7 +262,7 @@ lerobot-replay \
 
 1. **데이터셋 로드**
    ```
-   Loading dataset ${HF_USER}/so101_pick_place...
+   Loading dataset ${HF_USER}/${TASK_NAME}...
    Episode 0 loaded with 1247 frames
    ```
 
@@ -301,43 +301,24 @@ lerobot-replay \
 
 ### Resume 기본 사용법
 
-#### 1. 초기 데이터 수집
+5개를 추가로 수집하고 싶다면:
 
 ```bash
-python -m lerobot.record \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM1 \
-    --robot.id=follower \
-    --robot.cameras="{ Down: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 30}, Gripper: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 25}}" \
+lerobot-record \
     --teleop.type=so101_leader \
     --teleop.port=/dev/ttyACM0 \
     --teleop.id=leader \
-    --dataset.repo_id=${HF_USER}/grab_sock \
-    --dataset.num_episodes=120 \
-    --dataset.single_task="Grab a sock and put it in the box" \
-    --dataset.episode_time_s=15 \
-    --dataset.reset_time_s=3 \
-    --display_data=true
-```
-
-#### 2. 중단 후 재개
-
-데이터 수집이 115개 에피소드까지 완료된 후 중단되었을 때, 나머지 5개를 추가로 수집:
-
-```bash
-python -m lerobot.record \
     --robot.type=so101_follower \
     --robot.port=/dev/ttyACM1 \
     --robot.id=follower \
-    --robot.cameras="{ Down: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 30}, Gripper: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 25}}" \
-    --teleop.type=so101_leader \
-    --teleop.port=/dev/ttyACM0 \
-    --teleop.id=leader \
-    --dataset.repo_id=${HF_USER}/grab_sock \
-    --dataset.num_episodes=5 \
-    --dataset.single_task="Grab a sock and put it in the box" \
-    --dataset.episode_time_s=15 \
-    --dataset.reset_time_s=3 \
+    --robot.cameras='{ 
+        top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+        wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+        belly: {type: opencv, index_or_path: 6, width: 640, height: 480, fps: 25},
+    }' \
+    --dataset.repo_id=${HF_USER}/${TASK_NAME} \
+    --dataset.num_episodes=25 \
+    --dataset.single_task=${TASK_NAME} \
     --display_data=true \
     --resume=true
 ```
