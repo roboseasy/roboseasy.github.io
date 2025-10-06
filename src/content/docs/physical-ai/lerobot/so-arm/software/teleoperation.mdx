@@ -143,15 +143,20 @@ Camera#1:
 ### 카메라 옵션 적용 예시
 
 ```bash
-lerobot-teleoperate \ \
-  --robot.type=so101_follower \
-  --robot.port=/dev/ttyACM1 \
-  --robot.id=follower \
-  --robot.cameras="{top: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 25}, wrist: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25}}" \
-  --teleop.type=so101_leader \
-  --teleop.port=/dev/ttyACM0 \
-  --teleop.id=leader \
+lerobot-teleoperate \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/ttyACM0 \
+    --teleop.id=leader \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --robot.cameras='{ 
+        top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+        wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+        belly: {type: opencv, index_or_path: 6, width: 640, height: 480, fps: 25},
+    }' \
   --display_data=true
+
 ```
 
 - 여러 카메라를 동시에 사용할 수 있습니다.
