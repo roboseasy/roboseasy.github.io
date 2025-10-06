@@ -75,7 +75,7 @@ source .venv/bin/activate
 다음 명령어를 실행하여 리더 암 Calibration을 시작합니다:
 
 ```bash
-python -m lerobot.calibrate \
+lerobot-calibrate \
     --teleop.type=so101_leader \
     --teleop.port=/dev/ttyACM0 \
     --teleop.id=leader
@@ -128,10 +128,10 @@ python -m lerobot.calibrate \
 리더 암 Calibration 완료 후, 다음 명령어로 팔로워 암 Calibration을 진행합니다:
 
 ```bash
-python -m lerobot.calibrate \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM1 \
-    --robot.id=follower
+lerobot-calibrate \
+    --teleop.type=so101_follower \
+    --teleop.port=/dev/ttyACM1 \
+    --teleop.id=follower
 ```
 
 
