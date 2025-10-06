@@ -1,0 +1,699 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="홈">
+  <section class="hero">
+    <h1 class="roboseasy">HuggingFace LeRobot</h1>
+    <p class="tagline">누구나 쉽게 따라하면서 배우는 Physical AI</p>
+    <p class="sub-tagline">전 국민의 Physical AI 접근성 향상에 기여합니다.</p>
+    <div class="cta-buttons">
+      <a href="/shop" target="_blank" class="btn btn-tertiary">구매하기</a>
+      <a href="/docs/physical-ai/lerobot/intro" target="_blank" class="btn btn-quaternary">시작하기</a>
+    </div>
+    
+    <!-- Swiper 슬라이더 -->
+    <div class="slider-container">
+      <div class="swiper demo-slider">
+        <div class="swiper-wrapper" id="demo-gallery">
+          <a
+            class="swiper-slide"
+            href="https://i.postimg.cc/m2fdDv43/Main-Clipchamp.gif"
+            data-pswp-width="800" 
+            data-pswp-height="600"
+            target="_blank"
+            data-cropped="true"
+          >
+            <img src="https://i.postimg.cc/m2fdDv43/Main-Clipchamp.gif" alt="메인 데모 GIF" />
+          </a>
+          <a
+            class="swiper-slide"
+            href="https://i.postimg.cc/DyGwQbtk/Clipchamp.gif"
+            data-pswp-width="800" 
+            data-pswp-height="600"
+            target="_blank"
+            data-cropped="true"
+          >
+            <img src="https://i.postimg.cc/DyGwQbtk/Clipchamp.gif" alt="데모 GIF 2" />
+          </a>
+          <a
+            class="swiper-slide"
+            href="https://i.postimg.cc/MT4zVW5p/Clipchamp-1.gif"
+            data-pswp-width="800" 
+            data-pswp-height="600"
+            target="_blank"
+            data-cropped="true"
+          >
+            <img src="https://i.postimg.cc/MT4zVW5p/Clipchamp-1.gif" alt="데모 GIF 3" />
+          </a>
+          <a
+            class="swiper-slide"
+            href="https://i.postimg.cc/vBr2ryWd/main5.gif"
+            data-pswp-width="800" 
+            data-pswp-height="600"
+            target="_blank"
+            data-cropped="true"
+          >
+            <img src="https://i.postimg.cc/vBr2ryWd/main5.gif" alt="데모 GIF 4" />
+          </a>
+          <a
+            class="swiper-slide"
+            href="https://i.postimg.cc/vZGYf8fG/2025-08-03-165904.gif"
+            data-pswp-width="800" 
+            data-pswp-height="600"
+            target="_blank"
+            data-cropped="true"
+          >
+            <img src="https://i.postimg.cc/vZGYf8fG/2025-08-03-165904.gif" alt="데모 GIF 5" />
+          </a>
+        </div>
+        <!-- 네비게이션 버튼 -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+        <!-- 페이지네이션 -->
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+
+    <script>
+      // Swiper 초기화
+      import Swiper from 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.mjs';
+      
+      // PhotoSwipe 라이트박스
+      import PhotoSwipeLightbox from 'https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js';
+
+      // Swiper 설정
+      const swiper = new Swiper(".demo-slider", {
+        loop: true,
+        slidesPerView: 3, // 3개 동시 표시
+        spaceBetween: 20, // 슬라이드 간격
+        centeredSlides: true, // 중앙 정렬
+        grabCursor: true, // 드래그 커서 표시
+        touchEventsTarget: 'container', // 터치 이벤트 대상
+        simulateTouch: true, // 마우스 드래그 활성화
+        allowTouchMove: true, // 터치/드래그 이동 허용
+        loopedSlides: 5, // 전체 슬라이드 개수와 동일하게 설정
+        autoplay: {
+          delay: 10000, // 15초마다 자동 슬라이드
+          disableOnInteraction: false,
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+        // 반응형 설정
+        breakpoints: {
+          320: {
+            slidesPerView: 1,
+            spaceBetween: 10,
+            loopedSlides: 5,
+          },
+          768: {
+            slidesPerView: 2,
+            spaceBetween: 15,
+            loopedSlides: 5,
+          },
+          1024: {
+            slidesPerView: 3,
+            spaceBetween: 20,
+            loopedSlides: 5,
+          }
+        }
+      });
+
+      // PhotoSwipe 라이트박스 설정
+      const lightbox = new PhotoSwipeLightbox({
+        gallery: '#demo-gallery',
+        children: 'a',
+        pswpModule: () => import('https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.esm.min.js')
+      });
+      lightbox.init();
+    </script>
+  </section>
+
+  <section class="features">
+    <h2>모두를 위한 Physical AI</h2>
+    <div class="feature-grid">
+      <a href="/shop" class="feature-card">
+        <h3>구매</h3>
+        <p>LeRobot 시리즈 제품을 판매하고 있습니다.</p>
+      </a>
+      <a href="/docs" class="feature-card">
+        <h3>오픈소스</h3>
+        <p>공개된 문서를 통해 스스로 따라하며 익힐 수 있습니다.</p>
+      </a>
+      <div class="feature-card">
+        <h3>강의</h3>
+        <p>문서로 따라하기 힘드신 분들을 위해 온/오프라인 강의를 제공하고 있습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="youtube-section">
+    <h2>YouTube 콘텐츠</h2>
+    <div class="youtube-grid">
+      <div class="youtube-card">
+        <h3>조립 영상</h3>
+        <div class="youtube-embed">
+          <iframe 
+            src="https://www.youtube.com/embed/I2O7ipTH5VI"
+            title="So-Arm max 조립 영상"
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+      <div class="youtube-card">
+        <h3>Physical AI 데모 영상</h3>
+        <div class="youtube-embed">
+          <iframe 
+            src="https://www.youtube.com/embed/2Dxv1VEfRjs" 
+            title="RoboSEasy AI 모델 데모 영상"
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="current-focus">
+    <h2>On Going Projects</h2>
+    <div class="focus-content">
+      <h3>HuggingFace LeRobot으로 만드는 Physical AI</h3>
+      <p>로봇 팔을 직접 조립하고, AI로 제어하는 실전 프로젝트를 함께 만들어갑니다.</p>
+      <a href="/docs/physical-ai/lerobot/intro" target="_blank" class="btn btn-quaternary">시작하기</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* Swiper CSS 임포트 */
+  @import url('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css');
+  @import url('https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/photoswipe.css');
+
+  /* 배경색 강제 적용 */
+  body {
+    background: #0d030f !important;
+    color: #ffffff !important;
+  }
+  
+  .hero {
+    text-align: center;
+    padding: 4rem 0;
+    background: #0d030f;
+  }
+
+  .hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #a259ff, #e0aaff, var(--color-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px #a259ff);
+  }
+
+  .tagline {
+    font-size: 1.5rem;
+    color: var(--color-text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 3rem;
+  }
+
+  /* 슬라이더 컨테이너 */
+  .slider-container {
+    max-width: 1200px; /* 3개 표시를 위해 더 넓게 */
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+  }
+
+  .demo-slider {
+    padding: 0 0 60px 0;
+    border-radius: 1rem;
+    overflow: hidden; /* 여분의 슬라이드 숨기기 */
+  }
+
+  .swiper-slide {
+    width: 100%;
+    height: 350px; /* 3개 표시를 위해 조금 작게 */
+    border-radius: 1rem;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(162, 89, 255, 0.3);
+    opacity: 0.7; /* 비활성 슬라이드는 투명도 낮게 */
+    transform: scale(0.9); /* 비활성 슬라이드는 작게 */
+  }
+
+  /* 중앙(활성) 슬라이드 스타일 */
+  .swiper-slide-active {
+    opacity: 1;
+    transform: scale(1);
+    z-index: 2;
+  }
+
+  /* 인접한 슬라이드들 */
+  .swiper-slide-prev,
+  .swiper-slide-next {
+    opacity: 0.8;
+    transform: scale(0.95);
+  }
+
+  .swiper-slide:hover {
+    transform: scale(1.05);
+    box-shadow: 0 20px 40px rgba(162, 89, 255, 0.5);
+    z-index: 3;
+  }
+
+  .swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 1rem;
+    user-select: none; /* 드래그 시 이미지 선택 방지 */
+    -webkit-user-drag: none;
+  }
+
+  /* Swiper 네비게이션 버튼 커스터마이징 */
+  .swiper-button-next,
+  .swiper-button-prev {
+    background: rgba(0, 0, 0, 0.5);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+    opacity: 0.8;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(162, 89, 255, 0.3);
+  }
+
+  /* 버튼 위치 조정 */
+  .swiper-button-prev {
+    left: 10px;
+  }
+
+  .swiper-button-next {
+    right: 10px;
+  }
+
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    background: rgba(162, 89, 255, 0.8);
+    color: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+    opacity: 1;
+    box-shadow: 0 0 15px rgba(162, 89, 255, 0.6);
+  }
+
+  .swiper-button-next::after,
+  .swiper-button-prev::after {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  /* 페이지네이션 커스터마이징 */
+  .swiper-pagination {
+    bottom: 20px;
+  }
+
+  .swiper-pagination-bullet {
+    background: rgba(162, 89, 255, 0.5);
+    width: 12px;
+    height: 12px;
+    transition: all 0.3s ease;
+  }
+
+  .swiper-pagination-bullet-active {
+    background: #a259ff;
+    transform: scale(1.3);
+    box-shadow: 0 0 10px rgba(162, 89, 255, 0.8);
+  }
+
+  .btn {
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .btn-primary {
+    background: #a259ff;
+    color: var(--color-bg-primary);
+    font-weight: 700;
+  }
+
+  .btn-primary:hover {
+    background: #e0aaff;
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px #a259ff, 0 0 40px #a259ff;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: #a259ff;
+    border: 2px solid #a259ff;
+  }
+
+  .btn-secondary:hover {
+    background: #a259ff;
+    color: var(--color-bg-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px #a259ff, 0 0 40px #a259ff;
+  }
+
+  .btn-tertiary {
+    background: transparent;
+    color: hsl(194, 100%, 52%);
+    border: 2px solid #3cb9fc;
+  }
+
+  .btn-tertiary:hover {
+    background: #3cb9fc;
+    color: var(--color-bg-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px #3cb9fc, 0 0 40px #3cb9fc;
+  }
+
+  .btn-quaternary {
+    background: transparent;
+    color: #b537f2;
+    border: 2px solid #b537f2;
+  }
+
+  .btn-quaternary:hover {
+    background: #b537f2;
+    color: var(--color-bg-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px #b537f2, 0 0 40px #b537f2;
+  }
+
+  /* YouTube 섹션 */
+  .youtube-section {
+    margin: 4rem 0;
+  }
+  
+  .youtube-section h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #f148fb;
+    text-align: center;
+  }
+  
+  .youtube-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+  
+  .youtube-card {
+    background: rgba(162, 89, 255, 0.08);
+    border: 1px solid #a259ff;
+    border-radius: 1rem;
+    padding: 0.5rem 1.5rem 1.5rem;
+    transition: all 0.3s;
+  }
+  
+  .youtube-card:hover {
+    transform: translateY(-4px);
+    border-color: #a259ff;
+    box-shadow: 0 0 20px #a259ff, 0 0 40px #a259ff;
+  }
+  
+  .youtube-card h3 {
+    color: #00c2ba;
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+  
+  .youtube-embed {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    background: #000;
+    border-radius: 0.75rem;
+  }
+  
+  .youtube-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.75rem;
+  }
+
+  .features {
+    margin: 4rem 0;
+  }
+
+  .features h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 3rem;
+    color: #b450ee;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .feature-card {
+    background: rgba(13, 3, 15, 0.8);
+    border: 1px solid #a259ff;
+    padding: 0.75rem 2rem 2rem;
+    border-radius: 1rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* 링크 카드 스타일 */
+  a.feature-card {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    cursor: pointer;
+  }
+
+  a.feature-card:hover {
+    color: inherit;
+  }
+  
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #a259ff, #e0aaff);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-4px);
+    border-color: #a259ff;
+    box-shadow: 0 0 20px #a259ff, 0 0 40px #a259ff;
+  }
+  
+  .feature-card:hover::before {
+    transform: translateX(0);
+  }
+
+  .feature-card h3 {
+    color: #e0aaff;
+    margin-bottom: 1rem;
+  }
+
+  .current-focus {
+    background: linear-gradient(135deg, rgba(162, 89, 255, 0.15), rgba(67, 214, 168, 0.1));
+    border: 1px solid #a259ff;
+    padding: 1rem 3rem 3rem;
+    border-radius: 1rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .current-focus::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(162, 89, 255, 0.15) 0%, transparent 70%);
+    animation: pulse 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 1; }
+  }
+
+  .current-focus h2 {
+    margin-bottom: 2rem;
+    color: #a259ff;
+  }
+
+  .focus-content h3 {
+    color: #e0aaff;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .focus-content p {
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 태블릿 반응형 */
+  @media (max-width: 1024px) {
+    .slider-container {
+      max-width: 800px;
+    }
+    
+    .swiper-slide {
+      height: 300px;
+    }
+
+    .youtube-grid {
+      grid-template-columns: 1fr;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+
+  /* 모바일 반응형 */
+  @media (max-width: 768px) {
+    .hero {
+      padding: 2rem 1rem;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+    }
+
+    .tagline {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+    
+    .sub-tagline {
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+      max-width: 300px;
+      margin: 0 auto 2rem auto;
+    }
+    
+    .btn {
+      text-align: center;
+      padding: 1rem 2rem;
+    }
+
+    .slider-container {
+      padding: 0 1rem;
+      max-width: 600px;
+    }
+
+    .swiper-slide {
+      height: 250px;
+    }
+
+    .swiper-button-next,
+    .swiper-button-prev {
+      width: 40px;
+      height: 40px;
+    }
+
+    .swiper-button-prev {
+      left: 5px;
+    }
+
+    .swiper-button-next {
+      right: 5px;
+    }
+
+    .swiper-button-next::after,
+    .swiper-button-prev::after {
+      font-size: 16px;
+    }
+
+    .features, .youtube-section, .current-focus {
+      margin: 2rem 0;
+    }
+
+    .features h2, .youtube-section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .feature-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .youtube-grid {
+      gap: 1rem;
+    }
+    
+    .youtube-card {
+      padding: 0.75rem 1rem 1rem;
+    }
+    
+    .current-focus {
+      padding: 1.5rem 1.5rem 2rem;
+    }
+    
+    .current-focus h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .focus-content h3 {
+      font-size: 1.1rem;
+    }
+  }
+  
+  /* 매우 작은 화면 */
+  @media (max-width: 480px) {
+    .hero h1 {
+      font-size: 2rem;
+    }
+    
+    .swiper-slide {
+      height: 200px;
+    }
+  }
+</style>

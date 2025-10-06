@@ -1,0 +1,152 @@
+---
+title: '모델 학습 가이드'
+description: 'LeRobot으로 Imitation Learning 모델을 학습시키는 방법'
+---
+
+import Callout from '../../../../../../components/Callout.astro';
+import Tabs from '../../../../../../components/Tabs.astro';
+
+<Callout type="info" title="Imitation Learning이란?">
+  Imitation Learning은 인간의 시연을 관찰하여 로봇이 작업을 학습하는 방법입니다. LeRobot은 최신 딥러닝 기술을 활용하여 효과적인 모방 학습을 지원합니다.
+</Callout>
+
+## 학습 개요
+
+LeRobot에서 지원하는 주요 Policy (Model):
+
+1. **ACT (Action Chunking with Transformers)**: Transformer 기반의 액션 모델
+2. **Diffusion Policy**: 확산 모델을 활용한 정책 학습
+3. **VLA (Vision-Language-Action)**: 비전-언어 모델 기반 (SmolVLA)
+4. OpenPi NVIDIA GROOT 등 다양한 모델이 계속 지원 되고 있으니 확인해보세요.
+
+모델을 고르고 학습시키면 됩니다, 처음 학습해보시는 것이라면 ACT 를 추천합니다. 가장 가볍고 쉽습니다. 
+
+## 학습 환경 준비
+
+### GPU 설정
+
+<Callout type="warning" title="GPU 권장사항">
+  효율적인 학습을 위해 CUDA 지원 GPU (최소 RTX3080)를 권장합니다.
+</Callout>
+
+```bash
+# CUDA 확인
+nvidia-smi
+```
+
+
+## 기본 학습 실행
+
+```bash
+# 명령줄에서 실행
+python -m lerobot.scripts.train \
+  --dataset.repo_id=${HF_USER}/so101_test \
+  --policy.type=act \
+  --output_dir=outputs/train/act_so101_test \
+  --job_name=act_so101_test \
+  --policy.device=cuda \
+  --wandb.enable=true \
+  --policy.repo_id=${HF_USER}/my_policy
+```
+
+학습하던 checkpoint 에 이어서 학습하기
+
+```bash
+python -m lerobot.scripts.train \
+  --config_path=outputs/train/act_so101_test/checkpoints/last/pretrained_model/train_config.json \
+  --resume=true
+```
+
+### Jupyter Notebook 학습 예시
+
+실제 학습 과정을 단계별로 따라해볼 수 있는 공식 노트북입니다:
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 2rem 0;">
+  <div style="background: var(--color-surface); border: 2px solid var(--color-accent); border-radius: var(--radius-lg); padding: 1.5rem;">
+    <h4 style="margin: 0 0 1rem 0; color: var(--color-accent);">
+      <i class="fas fa-robot"></i> ACT 학습 노트북
+    </h4>
+    <p style="margin-bottom: 1rem; color: var(--color-text-secondary); font-size: var(--text-sm);">
+      Action Chunking with Transformers 모델을 처음부터 학습시키는 완전한 예제입니다.
+      데이터 로드부터 학습, 평가까지 모든 과정을 포함합니다.
+    </p>
+    <a 
+      href="https://github.com/huggingface/notebooks/blob/main/lerobot/training-act.ipynb" 
+      target="_blank"
+      style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--color-accent); color: var(--color-bg); text-decoration: none; border-radius: var(--radius-md); font-weight: 600; transition: all var(--transition-base);"
+      onmouseover="this.style.opacity='0.9'"
+      onmouseout="this.style.opacity='1'"
+    >
+      <i class="fab fa-github"></i> ACT 노트북 열기
+    </a>
+  </div>
+
+  <div style="background: var(--color-surface); border: 2px solid var(--color-green); border-radius: var(--radius-lg); padding: 1.5rem;">
+    <h4 style="margin: 0 0 1rem 0; color: var(--color-green);">
+      <i class="fas fa-language"></i> SmolVLA 학습 노트북
+    </h4>
+    <p style="margin-bottom: 1rem; color: var(--color-text-secondary); font-size: var(--text-sm);">
+      Vision-Language-Action 모델 학습 예제입니다.
+      자연어 명령으로 로봇을 제어하는 최신 기술을 배울 수 있습니다.
+    </p>
+    <a 
+      href="https://github.com/huggingface/notebooks/blob/main/lerobot/training-smolvla.ipynb" 
+      target="_blank"
+      style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--color-green); color: var(--color-bg); text-decoration: none; border-radius: var(--radius-md); font-weight: 600; transition: all var(--transition-base);"
+      onmouseover="this.style.opacity='0.9'"
+      onmouseout="this.style.opacity='1'"
+    >
+      <i class="fab fa-github"></i> SmolVLA 노트북 열기
+    </a>
+  </div>
+</div>
+
+<Callout type="tip" title="Colab에서 실행하기">
+  노트북을 다운로드하여 Google Colab에서 실행하면 무료 GPU를 사용할 수 있습니다.
+  단, Colab의 제한된 리소스로는 전체 학습이 어려울 수 있으니 작은 데이터셋으로 테스트해보세요.
+</Callout>
+
+
+### 실제 로봇 평가
+
+학습된 모델을 실제 로봇에서 평가:
+
+```bash
+# ㅓ봇에서 모델 평가 실행
+python -m lerobot.record  \
+  --robot.type=so100_follower \
+  --robot.port=/dev/ttyACM1 \
+  --robot.cameras="{ up: {type: opencv, index_or_path: /dev/video10, width: 640, height: 480, fps: 30}, side: {type: intelrealsense, serial_number_or_name: 233522074606, width: 640, height: 480, fps: 30}}" \
+  --robot.id=my_awesome_follower_arm \
+  --display_data=false \
+  --dataset.repo_id=${HF_USER}/eval_so100 \
+  --dataset.single_task="Put lego brick into the transparent box" \
+  # <- Teleop optional if you want to teleoperate in between episodes \
+  # --teleop.type=so100_leader \
+  # --teleop.port=/dev/ttyACM0 \
+  # --teleop.id=my_awesome_leader_arm \
+  --policy.path=${HF_USER}/my_policy
+```
+
+평가 결과는 자동으로 성공률과 함께 표시됩니다.
+
+## 모델 저장 및 배포
+
+### 모델을 HuggingFace Hub에 업로드
+
+```bash
+# 학습된 모델을 HuggingFace Hub에 업로드
+CKPT=010000
+huggingface-cli upload ${HF_USER}/act_so101_test${CKPT} \
+  outputs/train/act_so101_test/checkpoints/${CKPT}/pretrained_model
+```
+
+
+<Callout type="tip" title="모델 공유">
+  학습한 모델을 HuggingFace Hub에 공유하면 다른 사람들도 사용할 수 있습니다. 
+  모델 카드에 학습 데이터셋, 하드웨어 정보, 성능 지표를 포함하세요.
+</Callout>
+
+<Callout type="success" title="축하합니다!">
+  이제 LeRobot으로 AI 모델을 학습시키는 전체 과정을 마스터했습니다. 학습한 모델을 실제 로봇에 적용하여 놀라운 결과를 만들어보세요!
+</Callout>

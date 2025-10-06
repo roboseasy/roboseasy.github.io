@@ -1,0 +1,677 @@
+---
+title: 'Record & Replay'
+description: 'So-ARM 로봇 팔 데이터 수집 및 재생 가이드'
+---
+
+import Callout from '../../../../../../components/Callout.astro';
+import Tabs from '../../../../../../components/Tabs.astro';
+
+# Record & Replay
+
+## 개요
+
+Record & Replay는 로봇 학습의 핵심 과정으로, **텔레오퍼레이션을 통해 데이터를 수집(Record)**하고 **수집된 데이터를 로봇이 재생(Replay)**하는 기능입니다.
+
+<Callout type="info">
+Record & Replay 과정을 통해 로봇은 인간의 시연을 학습하여 동일한 작업을 자율적으로 수행할 수 있게 됩니다.
+</Callout>
+
+### 전체 워크플로우
+
+1. **Calibration**: 리더 암과 팔로워 암 캘리브레이션
+2. **Record**: 텔레오퍼레이션으로 작업 데이터 수집
+3. **Replay**: 수집된 데이터로 로봇 동작 재생
+4. **Training**: 수집된 데이터로 AI 모델 학습 (선택사항)
+
+---
+
+## 준비 사항
+
+Record & Replay를 시작하기 전에 다음 사항들을 확인해주세요:
+
+### 하드웨어 준비
+- So-ARM 리더 암과 팔로워 암이 캘리브레이션 완료된 상태
+- USB 포트 연결 상태 확인 (`/dev/ttyACM0`, `/dev/ttyACM1`)
+- 카메라 연결 (선택사항, 시각 데이터 수집용)
+- 충분한 작업 공간 확보
+
+### 소프트웨어 준비
+
+#### 1. HuggingFace 계정 설정
+
+먼저 HuggingFace 계정 설정과 환경 변수를 구성합니다:
+
+```bash
+# 1. HuggingFace CLI 토큰으로 로그인
+hf auth login --token YOUR_TOKEN_HERE --add-to-git-credential
+# 예시: hf auth login --token YOUR_HUGGINGFACE_TOKEN_HERE --add-to-git-credential
+
+# 2. 로그인 확인 및 환경 변수 설정
+HF_USER=$(hf auth whoami | head -n 1)
+echo $HF_USER
+# 로그인이 성공했다면 본인의 HuggingFace 사용자명이 출력됩니다.
+```
+
+<Callout type="info">
+**토큰 생성 방법:**
+1. [HuggingFace 토큰 설정 페이지](https://huggingface.co/settings/tokens)에서 새 토큰 생성
+2. 권한은 "Write" 선택 (데이터셋 업로드용)
+3. 생성된 토큰을 위 명령어에 사용
+</Callout>
+
+#### 2. 영구 환경 변수 설정 (선택사항)
+
+매번 설정하지 않도록 `.bashrc` 파일에 추가:
+
+```bash
+# ~/.bashrc 맨 아래 추가
+export HF_USER=$(python - <<'PY'
+from huggingface_hub import whoami
+print(whoami().get("name", ""))
+PY
+)
+
+# 변경사항 적용
+source ~/.bashrc
+
+# 설정 확인
+echo $HF_USER
+```
+
+<Callout type="tip">
+**환경 변수 설정 팁:**
+- `HF_USER` 환경 변수를 설정하면 모든 명령어에서 `${HF_USER}`를 사용할 수 있습니다
+- 한 번만 설정하면 모든 LeRobot 명령어에서 자동으로 적용됩니다
+- 팀으로 작업할 때 각자의 계정이 자동으로 적용되어 편리합니다
+</Callout>
+
+#### 3. 권한 설정
+
+```bash
+# USB 포트 권한 설정 (Ubuntu)
+sudo chmod 666 /dev/ttyACM0
+sudo chmod 666 /dev/ttyACM1
+
+# 사용자를 dialout 그룹에 추가
+sudo usermod -a -G dialout $USER
+# 로그아웃 후 다시 로그인
+```
+
+---
+
+## Record (데이터 수집)
+
+### 기본 데이터 수집
+
+So-ARM 로봇으로 텔레오퍼레이션 데이터를 수집하는 기본 명령어:
+
+```bash
+lerobot-record \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/ttyACM0 \
+    --teleop.id=leader \
+    --dataset.repo_id=${HF_USER}/so101_pick_place \
+    --dataset.num_episodes=10 \
+    --dataset.single_task="Pick up the cube and place it in the box"
+```
+
+### 카메라를 포함한 데이터 수집
+
+시각 정보와 함께 데이터를 수집하려면 카메라 설정을 추가합니다:
+
+```bash
+lerobot-record \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --robot.cameras='{ 
+        front: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30},
+        wrist: {type: opencv, index_or_path: 1, width: 640, height: 480, fps: 30}
+    }' \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/ttyACM0 \
+    --teleop.id=leader \
+    --dataset.repo_id=${HF_USER}/so101_visual_manipulation \
+    --dataset.num_episodes=25 \
+    --dataset.single_task="Pick and place objects using visual feedback" \
+    --display_data=true
+```
+
+### 주요 Record 옵션 설명
+
+#### 로봇 설정
+- `--robot.type=so101_follower`: 팔로워 로봇 타입
+- `--robot.port=/dev/ttyACM1`: 팔로워 로봇 포트
+- `--robot.id=follower`: 팔로워 로봇 고유 ID
+
+#### 텔레오퍼레이션 설정
+- `--teleop.type=so101_leader`: 리더 로봇 타입
+- `--teleop.port=/dev/ttyACM0`: 리더 로봇 포트
+- `--teleop.id=leader`: 리더 로봇 고유 ID
+
+#### 데이터셋 설정
+- `--dataset.repo_id`: HuggingFace Hub 데이터셋 이름 (`username/dataset_name`)
+- `--dataset.num_episodes`: 수집할 에피소드 수
+- `--dataset.single_task`: 작업에 대한 명확한 설명
+- `--dataset.fps`: 데이터 수집 주파수 (기본값: 30Hz)
+- `--dataset.episode_time_s`: 각 에피소드 녹화 시간 (기본값: 60초)
+- `--dataset.reset_time_s`: 에피소드 간 리셋 시간 (기본값: 60초)
+
+#### 추가 옵션
+- `--display_data=true`: 실시간 데이터 시각화
+- `--dataset.push_to_hub=true`: HuggingFace Hub에 자동 업로드 (기본값)
+- `--dataset.video=true`: 비디오 인코딩 활성화 (기본값)
+
+### Record 과정
+
+1. **명령어 실행**
+   명령어를 실행하면 다음과 같은 메시지가 표시됩니다:
+   ```
+   Recording episode 0
+   Press 'q' to quit early, 'r' to rerecord episode
+   ```
+
+2. **데이터 수집 수행**
+   - 리더 암을 조작하여 원하는 작업을 수행
+   - 팔로워 암이 실시간으로 동작을 따라함
+   - 카메라가 시각 정보를 동시에 기록
+
+3. **에피소드 완료**
+   - 설정된 시간이 지나거나 수동으로 중단
+   - 환경을 리셋할 시간 제공
+   - 다음 에피소드 자동 시작
+
+4. **데이터 저장**
+   각 에피소드 완료 후 다음 위치에 저장:
+   ```
+   ~/.cache/huggingface/datasets/${HF_USER}___so101_pick_place/
+   ```
+
+<Callout type="tip">
+**효과적인 데이터 수집 팁:**
+- 작업을 천천히, 부드럽게 수행하세요
+- 실패한 시도도 포함하여 다양성을 확보하세요
+- 동일한 작업을 다양한 각도와 방법으로 반복하세요
+- 카메라 시야에 중요한 객체들이 잘 보이도록 하세요
+</Callout>
+
+---
+
+## Replay (재생)
+
+수집된 데이터를 사용하여 로봇이 동일한 작업을 재생하도록 할 수 있습니다.
+
+### 기본 Replay
+
+```bash
+lerobot-replay \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --dataset.repo_id=${HF_USER}/so101_pick_place \
+    --dataset.episode=0
+```
+
+### 특정 에피소드 재생
+
+```bash
+lerobot-replay \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --dataset.repo_id=${HF_USER}/so101_pick_place \
+    --dataset.episode=5 \
+    --dataset.fps=30
+```
+
+### 로컬 데이터셋 재생
+
+HuggingFace Hub 대신 로컬 데이터셋을 사용하는 경우:
+
+```bash
+lerobot-replay \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --dataset.repo_id=${HF_USER}/so101_pick_place \
+    --dataset.root=./local_datasets \
+    --dataset.episode=0
+```
+
+### 주요 Replay 옵션 설명
+
+- `--dataset.repo_id`: 재생할 데이터셋 이름
+- `--dataset.episode`: 재생할 특정 에피소드 번호 (0부터 시작)
+- `--dataset.fps`: 재생 속도 조절 (기본값: 원본 데이터의 FPS)
+- `--dataset.root`: 로컬 데이터셋 경로 (선택사항)
+- `--play_sounds=true`: 음성 안내 활성화 (기본값)
+
+### Replay 과정
+
+1. **데이터셋 로드**
+   ```
+   Loading dataset ${HF_USER}/so101_pick_place...
+   Episode 0 loaded with 1247 frames
+   ```
+
+2. **로봇 연결**
+   ```
+   Connecting to robot...
+   Robot connected successfully
+   ```
+
+3. **재생 시작**
+   ```
+   Replaying episode...
+   Frame 1/1247
+   Frame 2/1247
+   ...
+   ```
+
+4. **재생 완료**
+   ```
+   Replay completed successfully
+   Robot disconnected
+   ```
+
+<Callout type="warning">
+**Replay 주의사항:**
+- 재생 전 로봇 주변 환경이 녹화 시와 유사한지 확인하세요
+- 로봇이 장애물과 충돌하지 않도록 안전한 공간을 확보하세요
+- 비상시 Ctrl+C로 즉시 중단할 수 있도록 준비하세요
+</Callout>
+
+---
+
+## 데이터셋 추가 구축 (Resume)
+
+데이터 수집 중 불가피한 상황으로 중단되거나, 기존 데이터셋에 더 많은 에피소드를 추가하고 싶을 때 `--resume=true` 옵션을 사용할 수 있습니다.
+
+### Resume 기본 사용법
+
+#### 1. 초기 데이터 수집
+
+```bash
+python -m lerobot.record \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --robot.cameras="{ Down: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 30}, Gripper: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 25}}" \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/ttyACM0 \
+    --teleop.id=leader \
+    --dataset.repo_id=${HF_USER}/grab_sock \
+    --dataset.num_episodes=120 \
+    --dataset.single_task="Grab a sock and put it in the box" \
+    --dataset.episode_time_s=15 \
+    --dataset.reset_time_s=3 \
+    --display_data=true
+```
+
+#### 2. 중단 후 재개
+
+데이터 수집이 115개 에피소드까지 완료된 후 중단되었을 때, 나머지 5개를 추가로 수집:
+
+```bash
+python -m lerobot.record \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --robot.cameras="{ Down: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 30}, Gripper: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 25}}" \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/ttyACM0 \
+    --teleop.id=leader \
+    --dataset.repo_id=${HF_USER}/grab_sock \
+    --dataset.num_episodes=5 \
+    --dataset.single_task="Grab a sock and put it in the box" \
+    --dataset.episode_time_s=15 \
+    --dataset.reset_time_s=3 \
+    --display_data=true \
+    --resume=true
+```
+
+<Callout type="warning">
+**Resume 사용 시 주의사항:**
+- `--dataset.num_episodes`는 **추가로 수집할** 에피소드 수를 입력합니다
+- 기존에 115개가 있고 5개를 더 수집하려면 `--dataset.num_episodes=5`로 설정
+- 모든 다른 설정(카메라, 태스크 등)은 기존과 동일하게 유지해야 합니다
+</Callout>
+
+### 키보드 단축키
+
+데이터 수집 중 사용할 수 있는 키보드 단축키:
+
+- **→ (오른쪽 화살표 키)**: 현재 에피소드를 조기 종료하고 다음 에피소드로 이동
+- **← (왼쪽 화살표 키)**: 현재 에피소드를 취소하고 다시 기록  
+- **ESC (Esc 키)**: 즉시 세션을 중단하고, 영상을 인코딩한 뒤 데이터셋을 업로드
+
+### 데이터 수집 모범 사례
+
+<Callout type="tip">
+**효과적인 데이터 수집 팁:**
+- **일관된 환경**: 항상 동일한 조명과 배경에서 데이터 수집
+- **정확한 집기**: 항상 일정한 부분을 집어 일관성 유지
+- **카메라 고정**: 카메라 위치를 변경하지 말고 고정 유지
+- **다양성 확보**: 같은 작업이라도 다양한 각도와 방법으로 시도
+- **실패 포함**: 완벽한 성공뿐만 아니라 실패 케이스도 포함하여 학습 효과 향상
+</Callout>
+
+### 일반적인 오류 해결
+
+#### FileExistsError 해결
+
+다음과 같은 오류가 발생할 때:
+
+```
+FileExistsError: [Errno 17] File exists: '/home/sw/.cache/huggingface/lerobot/swp4065/grab_sock'
+```
+
+**해결 방법:**
+```bash
+# 캐시 디렉토리에서 해당 데이터셋 폴더 삭제
+rm -rf ~/.cache/huggingface/lerobot/${HF_USER}/grab_sock
+
+# 또는 전체 캐시 정리
+rm -rf ~/.cache/huggingface/lerobot/
+```
+
+#### 데이터셋 상태 확인
+
+Resume 전에 기존 데이터셋의 상태를 확인:
+
+```bash
+python -c "
+from lerobot.datasets.lerobot_dataset import LeRobotDataset
+dataset = LeRobotDataset('${HF_USER}/grab_sock')
+print(f'현재 에피소드 수: {dataset.num_episodes}')
+print(f'총 프레임 수: {dataset.num_frames}')
+"
+```
+
+---
+
+## 데이터셋 관리
+
+### 로컬에만 데이터셋 저장
+
+기본적으로 LeRobot은 데이터 수집 후 자동으로 HuggingFace Hub에 업로드하지만, 로컬에만 저장하고 싶은 경우가 있습니다.
+
+#### HuggingFace 자동 업로드 비활성화
+
+```bash
+# 로컬 전용 데이터 수집 (기본)
+lerobot-record \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/ttyACM0 \
+    --teleop.id=leader \
+    --dataset.repo_id=local_dataset/so101_pick_place \
+    --dataset.num_episodes=10 \
+    --dataset.single_task="Pick up the cube and place it in the box" \
+    --dataset.push_to_hub=false
+```
+
+#### 사용자 지정 경로에 저장
+
+```bash
+# 특정 디렉토리에 저장
+lerobot-record \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/ttyACM0 \
+    --teleop.id=leader \
+    --dataset.repo_id=my_local_dataset/cube_manipulation \
+    --dataset.root=./my_datasets \
+    --dataset.num_episodes=15 \
+    --dataset.single_task="Manipulate colored cubes" \
+    --dataset.push_to_hub=false
+```
+
+#### 카메라 포함 로컬 데이터 수집
+
+```bash
+lerobot-record \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --robot.cameras='{ 
+        front: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30}
+    }' \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/ttyACM0 \
+    --teleop.id=leader \
+    --dataset.repo_id=local_dataset/visual_manipulation \
+    --dataset.root=./local_datasets \
+    --dataset.num_episodes=20 \
+    --dataset.single_task="Visual manipulation task" \
+    --dataset.push_to_hub=false \
+    --display_data=true
+```
+
+#### 로컬 저장의 장단점
+
+<Callout type="info">
+**로컬 저장의 장점:**
+- 데이터 프라이버시 보장
+- 네트워크 연결 불필요
+- 빠른 저장 속도
+- 민감한 데이터 보호
+- 오프라인 환경에서도 작업 가능
+</Callout>
+
+<Callout type="warning">
+**로컬 저장의 단점:**
+- 다른 사람과 공유하기 어려움
+- 백업 및 관리 책임
+- 하드웨어 고장 시 데이터 손실 위험
+- 협업 프로젝트에서 불편함
+</Callout>
+
+#### 나중에 수동 업로드
+
+로컬에서 작업 완료 후 선택적으로 HuggingFace Hub에 업로드할 수 있습니다:
+
+```bash
+# Python을 사용한 수동 업로드
+python -c "
+from lerobot.datasets.lerobot_dataset import LeRobotDataset
+dataset = LeRobotDataset('local_dataset/so101_pick_place', root='./my_datasets')
+dataset.push_to_hub('${HF_USER}/so101_pick_place', private=False)
+print('Upload completed!')
+"
+```
+
+### HuggingFace Hub 업로드
+
+데이터셋을 HuggingFace Hub에 업로드하여 공유하고 관리할 수 있습니다:
+
+```bash
+# 자동 업로드 (기본 동작)
+lerobot-record \
+    --dataset.push_to_hub=true \
+    --dataset.private=false \
+    --dataset.tags="[robotics, manipulation, so101]" \
+    # ... 기타 옵션들
+```
+
+### 데이터셋 확인
+
+수집된 데이터셋의 정보를 확인하려면:
+
+```bash
+python -c "
+from lerobot.datasets.lerobot_dataset import LeRobotDataset
+dataset = LeRobotDataset('${HF_USER}/so101_pick_place')
+print(f'Episodes: {dataset.num_episodes}')
+print(f'Total frames: {dataset.num_frames}')
+print(f'FPS: {dataset.fps}')
+print(f'Features: {list(dataset.features.keys())}')
+"
+```
+
+### 로컬 데이터셋 백업
+
+```bash
+# 데이터셋 복사
+cp -r ~/.cache/huggingface/datasets/${HF_USER}___so101_pick_place/ ./backup/
+
+# 압축
+tar -czf so101_dataset_backup.tar.gz ~/.cache/huggingface/datasets/${HF_USER}___so101_pick_place/
+```
+
+---
+
+## 실제 사용 예시
+
+### 예시 1: Pick and Place 작업
+
+```bash
+# 1. 데이터 수집
+lerobot-record \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --robot.cameras='{ 
+        front: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30}
+    }' \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/ttyACM0 \
+    --teleop.id=leader \
+    --dataset.repo_id=myusername/so101_cube_stacking \
+    --dataset.num_episodes=20 \
+    --dataset.single_task="Pick up red cubes and stack them in a tower" \
+    --dataset.episode_time_s=45 \
+    --display_data=true
+
+# 2. 데이터 재생 확인
+lerobot-replay \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --dataset.repo_id=myusername/so101_cube_stacking \
+    --dataset.episode=0
+```
+
+### 예시 2: 정밀 조립 작업
+
+```bash
+# 정밀한 조립 작업을 위한 낮은 FPS 설정
+lerobot-record \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --robot.cameras='{ 
+        wrist: {type: opencv, index_or_path: 1, width: 1280, height: 720, fps: 60}
+    }' \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/ttyACM0 \
+    --teleop.id=leader \
+    --dataset.repo_id=myusername/so101_precision_assembly \
+    --dataset.num_episodes=50 \
+    --dataset.single_task="Assemble electronic components with precision" \
+    --dataset.fps=60 \
+    --dataset.episode_time_s=120
+```
+
+---
+
+## 문제 해결
+
+### 일반적인 문제
+
+#### 1. 로봇 연결 실패
+```bash
+# 포트 확인
+ls /dev/ttyACM*
+
+# 권한 문제 해결
+sudo chmod 666 /dev/ttyACM0
+sudo chmod 666 /dev/ttyACM1
+
+# USB 재연결 후 다시 시도
+```
+
+#### 2. 카메라 인식 실패
+```bash
+# 카메라 장치 확인
+ls /dev/video*
+
+# OpenCV 카메라 테스트
+python -c "import cv2; print(cv2.VideoCapture(0).isOpened())"
+
+# 카메라 인덱스 변경 (0, 1, 2... 순서로 테스트)
+```
+
+#### 3. HuggingFace 업로드 실패
+```bash
+# HuggingFace 토큰 설정 확인
+huggingface-cli login
+
+# 네트워크 연결 확인
+ping huggingface.co
+
+# 수동 업로드
+python -c "
+from lerobot.datasets.lerobot_dataset import LeRobotDataset
+dataset = LeRobotDataset('local_dataset')
+dataset.push_to_hub('your_username/dataset_name')
+"
+```
+
+#### 4. 동기화 문제
+- 캘리브레이션 파일 재생성:
+```bash
+rm -rf ~/.cache/huggingface/lerobot/calibration/
+# 캘리브레이션 다시 수행
+```
+
+### 성능 최적화
+
+#### 1. 높은 FPS를 위한 설정
+```bash
+# CPU 성능 모드 설정 (Ubuntu)
+sudo cpupower frequency-set -g performance
+
+# 이미지 writer 스레드 수 조정
+lerobot-record \
+    --dataset.num_image_writer_processes=2 \
+    --dataset.num_image_writer_threads_per_camera=6 \
+    # ... 기타 옵션들
+```
+
+#### 2. 메모리 사용량 최적화
+```bash
+# 배치 인코딩 크기 조정
+lerobot-record \
+    --dataset.video_encoding_batch_size=5 \
+    # ... 기타 옵션들
+```
+
+<Callout type="success">
+Record & Replay 설정이 완료되었다면 이제 수집된 데이터로 AI 모델을 학습시켜 완전 자율 로봇을 만들 수 있습니다!
+</Callout>
+
+---
+
+## 다음 단계
+
+Record & Replay 설정이 완료되었다면:
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 2rem 0;">
+  <a href="/lerobot/docs/physical-ai/lerobot/so-arm/tutorials/imitation-learning" style="padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); text-decoration: none;">
+    <h3 style="margin: 0 0 0.5rem 0; color: var(--color-accent);"><i class="fas fa-brain"></i> Task 설정</h3>
+    <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">저희의 튜토리얼 Task를 Pick&Place로 설정합니다.</p>
+  </a>
+  
+  <a href="/lerobot/docs/physical-ai/lerobot/so-arm/software/data-collection" style="padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); text-decoration: none;">
+    <h3 style="margin: 0 0 0.5rem 0; color: var(--color-accent);"><i class="fas fa-database"></i> 데이터 수집</h3>
+    <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">데이터셋 수집</p>
+  </a>
+</div>

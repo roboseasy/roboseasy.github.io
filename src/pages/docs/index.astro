@@ -1,0 +1,323 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="문서">
+  <div class="docs-container">
+    <h1>문서</h1>
+    <p class="subtitle">RoboSEasy의 누구나 따라하면서 배우는 Physical AI</p>
+    
+    <section class="docs-section">
+      <h2>Physical LeRobot</h2>
+      <div class="docs-grid">
+        <a href="/docs/physical-ai/lerobot/intro" class="doc-card lerobot-card">
+          <h3>🤗 LeRobot 시작하기</h3>
+          <p>HuggingFace LeRobot으로 시작하는 Physical AI 입문</p>
+        </a>
+        <a href="/docs/physical-ai/lerobot/so-arm" class="doc-card soarm-card">
+          <h3>🤗 SO ARM 시작하기</h3>
+          <p>SO-ARM101 Max로 시작하는 Physical AI 실습</p>
+        </a>
+        <a class="doc-card lekiwi-card" onclick="alert('Comming Soon!')" style="cursor: pointer;">
+          <h3>🤗 LeKiWi 시작하기</h3>
+          <p>LeRobot LeKiWi 완벽 가이드</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="docs-section">
+      <h2>Simulation LeRobot</h2>
+      <div class="docs-grid">
+        <a class="doc-card leisaac-card" onclick="alert('Comming Soon!')" style="cursor: pointer;">
+          <h3>🕹️ Isaac Sim/Lab 시작하기</h3>
+          <p>Isaac Sim/Lab에서 LeRobot의 다양한 로봇들을 접해보세요.</p>
+          <span class="external-icon">↗</span>
+        </a>
+
+        <a class="doc-card lemujoco-card" onclick="alert('Comming Soon!')" style="cursor: pointer;">
+          <h3>🎮 Mujoco 시작하기</h3>
+          <p>Mujoco에서 LeRobot의 다양한 로봇들을 접해보세요.</p>
+          <span class="external-icon">↗</span>
+        </a>
+
+        
+      </div>
+    </section>
+
+
+    <section class="docs-section">
+      <h2>Our Robot</h2>
+      <div class="docs-grid">
+        <a class="doc-card dual-arm-card external-link" onclick="alert('Comming Soon!')" style="cursor: pointer;">
+          <h3>🦾 양팔 로봇</h3>
+          <p>LeRobot SO ARM 을 이용한 양팔 로봇</p>
+          <span class="external-icon">↗</span>
+        </a>
+
+        <a class="doc-card external-link" onclick="alert('Comming Soon!')" style="cursor: pointer;">
+          <h3>🦾 모바일 양팔 로봇</h3>
+          <p>LeRobot LeKiWi 를 이용한 모바일 양팔 로봇</p>
+          <span class="external-icon">↗</span>
+        </a>
+
+        <a class="doc-card external-link" onclick="alert('Comming Soon!')" style="cursor: pointer;">
+          <h3>🤖 모바일 휴모노이드</h3>
+          <p>모바일 양팔 로봇을 기반으로 어깨와 허리가 추가된 모바일 휴모노이드</p>
+          <span class="external-icon">↗</span>
+        </a>
+
+        <a class="doc-card external-link" onclick="alert('Comming Soon!')" style="cursor: pointer;">
+          <h3>🦿 이족 보행 로봇</h3>
+          <p>NVIDIA Blue와 같은 이족 보행 로봇</p>
+          <span class="external-icon">↗</span>
+        </a>
+
+        <a class="doc-card external-link" onclick="alert('Comming Soon!')" style="cursor: pointer;">
+          <h3>🤖 휴모노이드</h3>
+          <p>이족 보행 로봇에 앙팔을 추가한 휴모노이드</p>
+          <span class="external-icon">↗</span>
+        </a>
+
+
+      </div>
+      
+
+    </section>
+
+  </div>
+
+</Layout>
+
+<style>
+  /* 배경색 강제 적용 */
+  body {
+    background: var(--color-background) !important;
+    color: var(--color-text) !important;
+  }
+  
+  
+  .docs-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-8) var(--spacing-6);
+    color: var(--color-text);
+  }
+
+  h1 {
+    font-size: var(--text-5xl);
+    font-weight: var(--font-extrabold);
+    margin-bottom: var(--spacing-3);
+    background: linear-gradient(135deg, var(--color-text) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: var(--text-xl);
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-12);
+    line-height: var(--leading-relaxed);
+  }
+
+  .docs-section {
+    margin-bottom: var(--spacing-12);
+  }
+
+  .docs-section h2 {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-6);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+  }
+  
+  .docs-section h2::before {
+    content: '';
+    width: 4px;
+    height: 1.5em;
+    background: var(--color-accent);
+    border-radius: var(--radius-sm);
+  }
+
+  .docs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--spacing-6);
+  }
+
+  .doc-card {
+    background: var(--color-surface);
+    padding: var(--spacing-6);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: var(--color-text);
+    transition: all var(--transition-base);
+    border: 1px solid var(--color-border);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .doc-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-yellow));
+    transform: translateX(-100%);
+    transition: transform var(--transition-slow);
+  }
+  
+  .doc-card:hover::before {
+    transform: translateX(0);
+  }
+
+  .doc-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-accent);
+    background: var(--color-surface-hover);
+  }
+
+  .doc-card h3 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-3);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+
+  .doc-card p {
+    font-size: var(--text-base);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+  }
+
+  /* 외부 링크 카드 스타일 */
+  .doc-card.external-link {
+    position: relative;
+  }
+
+  .external-icon {
+    position: absolute;
+    top: var(--spacing-4);
+    right: var(--spacing-4);
+    font-size: var(--text-xl);
+    color: var(--color-accent);
+    opacity: 0.7;
+    transition: all var(--transition-base);
+  }
+
+  .doc-card.external-link:hover .external-icon {
+    opacity: 1;
+    transform: translate(2px, -2px);
+  }
+
+
+  /* 모바일 반응형 */
+  @media (max-width: 768px) {
+    .docs-container {
+      padding: var(--spacing-6) var(--spacing-4);
+    }
+    
+    h1 {
+      font-size: var(--text-4xl);
+    }
+    
+    .docs-grid {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-4);
+    }
+  }
+  .lerobot-card,
+  .soarm-card,
+  .lekiwi-card,
+  .leisaac-card,
+  .dual-arm-card {
+    position: relative;
+    overflow: hidden;
+    background: #111 !important;
+    transition: background 0.3s;
+    z-index: 1;
+  }
+  .lerobot-card::after,
+  .soarm-card::after,
+  .lekiwi-card::after,
+  .leisaac-card::after,
+  .dual-arm-card::after {
+    content: '';
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    width: 90%;
+    height: 90%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: var(--radius-md);
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 0;
+  }
+  .lerobot-card::after {
+    background-image:
+      linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+      url('/images/lerobot/huggingface_lerobot.jpg');
+  }
+  .soarm-card::after {
+    background-image:
+      linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+      url('/images/lerobot/roboseasy_so_arm.jpg');
+  }
+  .lekiwi-card::after {
+    background-image:
+      linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+      url('/images/lerobot/roboseasy_lekiwi.jpg');
+  }
+  
+  .leisaac-card::after {
+    background-image:
+      linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+      url('/images/lerobot/leisaac.jpg');
+  }
+  .dual-arm-card::after {
+    background-image:
+      linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+      url('/images/products/xlerobot_dual-arm-mobile-household-robot.jpeg');
+  }
+  .leisaac-card:hover::after,
+  .lemujoco-card:hover::after,
+  .lerobot-card:hover::after,
+  .soarm-card:hover::after,
+  .lekiwi-card:hover::after,
+  .dual-arm-card:hover::after {
+    opacity: 1;
+  }
+  .leisaac-card:hover,
+  .lerobot-card:hover,
+  .soarm-card:hover,
+  .lekiwi-card:hover,
+  .dual-arm-card:hover {
+    background: #111 !important;
+  }
+  .leisaac-card:hover h3,
+  .leisaac-card:hover p,
+  .lerobot-card:hover h3,
+  .lerobot-card:hover p,
+  .soarm-card:hover h3,
+  .soarm-card:hover p,
+  .lekiwi-card:hover h3,
+  .lekiwi-card:hover p,
+  .dual-arm-card:hover h3,
+  .dual-arm-card:hover p {
+    text-shadow: 0 2px 8px rgba(0,0,0,0.7), 0 0 2px #000;
+    position: relative;
+    z-index: 1;
+  }
+</style>

@@ -1,0 +1,325 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="행사 및 이벤트">
+  <div class="archive-container">
+    <h1>행사 및 이벤트</h1>
+    <p class="subtitle">RoboSEasy가 진행한 행사 및 이벤트와 앞으로의 일정</p>
+
+    <!-- <section class="upcoming-events">
+      <h2>예정된 행사</h2>
+      <div class="horizontal-scroll">
+        <div class="events-grid">
+          <div class="event-card upcoming">
+            <div class="coming-soon-badge">Coming Soon</div>
+            <div class="event-info">
+              <h3>Physical AI Meetup with Robotis</h3>
+              <p class="event-date-text">2025년 8월 중</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section> -->
+    
+
+    <!-- <section class="past-events">
+      <h2>지난 행사</h2>
+      <div class="horizontal-scroll">
+        <div class="events-grid">
+          <a href="https://sudormrf.run/2025/06/24/huggingface-lerobot-hackathon-review/" class="event-card-link" target="_blank" rel="noopener noreferrer">
+            <div class="event-card past">
+              <img src="/images/events/lerobot-hackathon.jpeg" alt="HuggingFace LeRobot Hackathon" />
+              <div class="event-info">
+                <h3>HuggingFace Worldwide Hackathon Seoul</h3>
+                <p class="event-date-text">2025년 6월 14일 ~ 15일</p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section> -->
+
+    <!-- <section class="event-gallery">
+      <h2>행사 갤러리</h2>
+      <div class="horizontal-scroll">
+        <div class="gallery-grid">
+          <div class="gallery-item video-item">
+            <iframe 
+              src="https://www.youtube.com/embed/HgN0qIFSd8I"
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </section> -->
+
+
+  </div>
+</Layout>
+
+<style>
+  /* CSS 변수 정의 */
+  :root {
+    --primary-color: #1a0f1f;
+    --secondary-color: #251730;
+    --accent-color: #fd7318;
+    --text-color: #ffffff;
+    --text-muted: #b8b8b8;
+    --color-green: #43d6a8;
+    --color-blue: #5fadfe;
+  }
+  
+  /* 배경색 강제 적용 */
+  body {
+    background: #0d030f !important;
+    color: #ffffff !important;
+  }
+  
+  .archive-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    color: var(--text-color);
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    margin-bottom: 3rem;
+  }
+
+  section {
+    margin-bottom: 4rem;
+  }
+
+  section h2 {
+    color: var(--accent-color);
+    margin-bottom: 2rem;
+  }
+
+  /* 예정된 행사 */
+  .event-card.upcoming {
+    background: var(--secondary-color);
+    border: 2px solid var(--accent-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    width: 300px; /* Set a fixed width for smaller card */
+    display: inline-block; /* Allow horizontal scrolling */
+    vertical-align: top; /* Align to top for inline-block */
+  }
+
+  .event-card.upcoming .event-info h3 {
+    margin-bottom: 0.25rem;
+    font-size: 1.1rem;
+  }
+
+  .event-card.upcoming .event-date-text {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .event-card.upcoming .event-info {
+    padding: 0; /* Remove padding from event-info */
+  }
+
+  /* 지난 행사 */
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+
+  .event-card.past {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: transform 0.3s;
+    background-image: url('/images/events/lerobot-hackathon.jpeg');
+    background-size: cover;
+    background-position: center;
+    height: 200px; /* Fixed height for the card */
+    display: flex;
+    align-items: flex-end; /* Align content to the bottom */
+  }
+
+  .event-card.past::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5); /* Translucent overlay */
+    z-index: 1;
+  }
+
+  .event-card.past:hover {
+    transform: translateY(-4px);
+  }
+
+  .event-card.past .event-info {
+    position: relative;
+    z-index: 2;
+    padding: 1rem;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Slightly darker background for text */
+  }
+
+  .event-card.past .event-info h3 {
+    margin-bottom: 0.25rem;
+    color: white;
+    white-space: normal; /* Ensure text wraps */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limit to 2 lines */
+    -webkit-box-orient: vertical;
+    line-height: 1.2; /* Adjust line height for better fit */
+    font-size: 1.1rem; /* Slightly reduce font size if needed */
+  }
+
+  .event-card.past .event-date-text {
+    color: #43d6a8; /* Green color for date */
+    font-size: 0.8rem;
+  }
+
+  .event-card.past img { /* Hide the img tag as background-image is used */
+    display: none;
+  }
+
+  .horizontal-scroll {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 1rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .horizontal-scroll .events-grid,
+  .horizontal-scroll .gallery-grid {
+    display: inline-flex;
+    gap: 1rem;
+  }
+
+  .event-card.past {
+    width: 300px;
+  }
+
+  .gallery-item {
+    width: 350px;
+    height: 200px;
+  }
+
+  .video-item iframe {
+    width: 100%;
+    height: 100%;
+  }
+
+  .event-date-text {
+    color: var(--accent-color);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .event-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  /* 갤러리 */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .gallery-item {
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    background: #333;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+
+  .gallery-item:hover img {
+    transform: scale(1.1);
+  }
+
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    background: #000;
+    margin-top: 1rem;
+    border-radius: 0.5rem;
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+    
+    .subtitle {
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .events-section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .event-card {
+      min-width: 250px;
+      max-width: 280px;
+    }
+    
+    .event-card.upcoming {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .event-details {
+      justify-content: center;
+    }
+    
+    .gallery-item {
+      width: 250px;
+      height: 200px;
+    }
+    
+    .gallery-item h4 {
+      font-size: 0.9rem;
+    }
+    
+    .coming-soon-badge {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.7rem;
+    }
+  }
+</style>

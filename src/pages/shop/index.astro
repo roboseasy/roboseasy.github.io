@@ -1,0 +1,124 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// 제품 정보 배열 (이미지, 이름, 설명, 구매 링크)
+const products = [
+  {
+    image: '/images/shop/so101.jpg',
+    name: 'LeRobot SO-ARM 101',
+    description: '가장 빠르게 모방학습과 VLA를 경험하세요.',
+    link: '/shop/soarm101'
+  },
+  {
+    image: '/images/shop/kiwi.png',
+    name: 'LeRobot Kiwi',
+    description: '자율주행과 모방학습, VLA를 통해 스스로 생각하고 결정하고 움직이는 Physical AI를 경험하세요.',
+    link: 'https://yourshop.com/kiwi'
+  },
+  {
+    image: '/images/shop/xlerobot_dual_arm.jpg',
+    name: 'xLeRobot Dual-Arm',
+    description: '시선이동이 가능한 SO-ARM 101 기반 양팔로봇으로 더 정말한 작업을 수행해 보세요.',
+    link: '/shop/xlerobot-dual-arm'
+  },
+];
+---
+
+<Layout title="Shop">
+  <div class="shop-container">
+    <h1>Shop</h1>
+    <p class="subtitle">lerobot의 다양한 조립 제품들 구매하기 </p>
+    <p>lerobot 구매를 위해 <board>알리익스프레스 등 중국 사이트</board>에 가입하는 것을 꺼리셨을 겁니다. <br> 
+      중국 사이트 가입을 하여 구매하려고 해도 싼 가격인 줄 알았지만, <board>실제 가격은 더 높았을 겁니다.</board> <br>
+      그럼에도 비교적 저렴해 보이지만, 결국 <board>관세를 추가적으로 직접 입금</board>해야하며, 배송까지 <board>3~4주라는 시간</board>이 듭니다. <br>
+      저희 로보시지를 통해 추가적인 관세 없이 바로 lerobot 조립 패키지를 구매하시고 빠르게 받아보세요. 
+    </p>
+    <hr class="divider" />
+    <div class="shop-grid">
+      {products.map(product => (
+        <div class="shop-card">
+          <a href={product.link}>
+            <img src={product.image} alt={product.name} class="shop-image" />
+          </a>
+          <div class="shop-info">
+            <h3>{product.name}</h3>
+            <p>{product.description}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .shop-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    color: #fff;
+  }
+  h1 {
+    font-size: 2.5rem;
+    color: #a259ff;
+    margin-bottom: 0.5rem;
+  }
+  .subtitle {
+    font-size: 1.2rem;
+    color: #b8b8b8;
+    margin-bottom: 2.5rem;
+  }
+  .shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+  .shop-card {
+    background: #251730;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .shop-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  }
+  .shop-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    background: #333;
+    border-bottom: 1px solid #a259ff;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .shop-info {
+    padding: 0.5rem;
+    text-align: center;
+  }
+  .shop-info h3 {
+    margin-bottom: 0.5rem;
+    color: #a259ff;
+    font-size: 1.3rem;
+  }
+  .shop-info p {
+    color: #b8b8b8;
+    font-size: 1rem;
+    max-width: 340px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  board {
+    color: #3eb489;
+    font-weight: bold;
+  }
+  .divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 2rem 0;
+  }
+</style>

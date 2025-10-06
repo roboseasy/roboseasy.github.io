@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://roboseasy.github.io/lerobot/sitemap-index.xml
