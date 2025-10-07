@@ -13,8 +13,8 @@ import Tabs from '../../../../../../components/Tabs.astro';
 - 준비 사항
 - Record (데이터 수집)
 - Replay (재생)
-- Visualization (데이터셋 확인)
 - Resume (데이터셋 추가)
+- Visualization (데이터셋 확인)
 
 ## 개요
 
@@ -293,7 +293,7 @@ print('Upload completed!')
 
 수집된 데이터를 사용하여 로봇이 동일한 작업을 재생하도록 할 수 있습니다.
 
-### 기본 Replay
+### 특정 에피소드 Replay
 
 ```bash
 lerobot-replay \
@@ -301,32 +301,6 @@ lerobot-replay \
     --robot.port=/dev/ttyACM1 \
     --robot.id=follower \
     --dataset.repo_id=${HF_USER}/${TASK_NAME} \
-    --dataset.episode=0
-```
-
-### 특정 에피소드 재생
-
-```bash
-lerobot-replay \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM1 \
-    --robot.id=follower \
-    --dataset.repo_id=${HF_USER}/${TASK_NAME} \
-    --dataset.episode=5 \
-    --dataset.fps=30
-```
-
-### 로컬 데이터셋 재생
-
-HuggingFace Hub 대신 로컬 데이터셋을 사용하는 경우:
-
-```bash
-lerobot-replay \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM1 \
-    --robot.id=follower \
-    --dataset.repo_id=${HF_USER}/${TASK_NAME} \
-    --dataset.root=./local_datasets \
     --dataset.episode=0
 ```
 
@@ -338,39 +312,69 @@ lerobot-replay \
 - `--dataset.root`: 로컬 데이터셋 경로 (선택사항)
 - `--play_sounds=true`: 음성 안내 활성화 (기본값)
 
-### Replay 과정
-
-1. **데이터셋 로드**
-   ```
-   Loading dataset ${HF_USER}/${TASK_NAME}...
-   Episode 0 loaded with 1247 frames
-   ```
-
-2. **로봇 연결**
-   ```
-   Connecting to robot...
-   Robot connected successfully
-   ```
-
-3. **재생 시작**
-   ```
-   Replaying episode...
-   Frame 1/1247
-   Frame 2/1247
-   ...
-   ```
-
-4. **재생 완료**
-   ```
-   Replay completed successfully
-   Robot disconnected
-   ```
 
 <Callout type="warning">
 **Replay 주의사항:**
 - 재생 전 로봇 주변 환경이 녹화 시와 유사한지 확인하세요
 - 로봇이 장애물과 충돌하지 않도록 안전한 공간을 확보하세요
 - 비상시 Ctrl+C로 즉시 중단할 수 있도록 준비하세요
+</Callout>
+
+---
+
+## Resume (데이터셋 추가)
+
+데이터 수집 중 불가피한 상황으로 중단되거나, 기존 데이터셋에 더 많은 에피소드를 추가하고 싶을 때 `--resume=true` 옵션을 사용할 수 있습니다.
+
+### Resume 기본 사용법
+
+5개를 추가로 수집하고 싶다면:
+
+```bash
+lerobot-record \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/ttyACM0 \
+    --teleop.id=leader \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --robot.cameras='{ 
+        top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+        wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+    }' \
+    --dataset.single_task=${TASK_NAME} \
+    --dataset.repo_id=${HF_USER}/${TASK_NAME} \
+    --dataset.num_episodes=5 \
+    --dataset.episode_time_s=15 \
+    --dataset.reset_time_s=3 \
+    --display_data=true \
+    --resume=true
+```
+
+<Callout type="warning">
+**Resume 사용 시 주의사항:**
+- `--dataset.num_episodes`는 **추가로 수집할** 에피소드 수를 입력합니다
+- 5개를 추가 수집하려면 `--dataset.num_episodes=5`로 설정
+- 모든 다른 설정(카메라, 태스크 등)은 기존과 동일하게 유지해야 합니다
+</Callout>
+
+### 키보드 단축키
+
+데이터 수집 중 사용할 수 있는 키보드 단축키:
+
+- **→ (오른쪽 화살표 키)**: 현재 에피소드를 조기 종료하고 다음 에피소드로 이동
+- **← (왼쪽 화살표 키)**: 현재 에피소드를 취소하고 다시 기록  
+- **ESC (Esc 키)**: 즉시 세션을 중단하고, 영상을 인코딩한 뒤 데이터셋을 업로드
+
+### 데이터 수집 모범 사례
+
+<Callout type="tip">
+**효과적인 데이터 수집 팁:**
+- **일관된 환경**: 항상 동일한 조명과 배경에서 데이터 수집
+- **정확한 집기**: 항상 일정한 부분을 집어 일관성 유지
+- **카메라 고정**: 카메라 위치를 변경하지 말고 고정 유지
+- **다양성 확보**: 같은 작업이라도 다양한 각도와 방법으로 시도
+- **실패 포함**: 완벽한 성공뿐만 아니라 실패 케이스도 포함하여 학습 효과 향상
 </Callout>
 
 ---
@@ -549,63 +553,6 @@ lerobot-dataset-viz \
 - ❌ 카메라 시야에서 벗어난 중요 객체
 - ❌ 타임스탬프 불일치
 - ❌ 노이즈가 많은 센서 데이터
-</Callout>
-
----
-
-## Resume (데이터셋 추가)
-
-데이터 수집 중 불가피한 상황으로 중단되거나, 기존 데이터셋에 더 많은 에피소드를 추가하고 싶을 때 `--resume=true` 옵션을 사용할 수 있습니다.
-
-### Resume 기본 사용법
-
-5개를 추가로 수집하고 싶다면:
-
-```bash
-lerobot-record \
-    --teleop.type=so101_leader \
-    --teleop.port=/dev/ttyACM0 \
-    --teleop.id=leader \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM1 \
-    --robot.id=follower \
-    --robot.cameras='{ 
-        top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
-        wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
-    }' \
-    --dataset.single_task=${TASK_NAME} \
-    --dataset.repo_id=${HF_USER}/${TASK_NAME} \
-    --dataset.num_episodes=5 \
-    --dataset.episode_time_s=15 \
-    --dataset.reset_time_s=3 \
-    --display_data=true \
-    --resume=true
-```
-
-<Callout type="warning">
-**Resume 사용 시 주의사항:**
-- `--dataset.num_episodes`는 **추가로 수집할** 에피소드 수를 입력합니다
-- 5개를 추가 수집하려면 `--dataset.num_episodes=5`로 설정
-- 모든 다른 설정(카메라, 태스크 등)은 기존과 동일하게 유지해야 합니다
-</Callout>
-
-### 키보드 단축키
-
-데이터 수집 중 사용할 수 있는 키보드 단축키:
-
-- **→ (오른쪽 화살표 키)**: 현재 에피소드를 조기 종료하고 다음 에피소드로 이동
-- **← (왼쪽 화살표 키)**: 현재 에피소드를 취소하고 다시 기록  
-- **ESC (Esc 키)**: 즉시 세션을 중단하고, 영상을 인코딩한 뒤 데이터셋을 업로드
-
-### 데이터 수집 모범 사례
-
-<Callout type="tip">
-**효과적인 데이터 수집 팁:**
-- **일관된 환경**: 항상 동일한 조명과 배경에서 데이터 수집
-- **정확한 집기**: 항상 일정한 부분을 집어 일관성 유지
-- **카메라 고정**: 카메라 위치를 변경하지 말고 고정 유지
-- **다양성 확보**: 같은 작업이라도 다양한 각도와 방법으로 시도
-- **실패 포함**: 완벽한 성공뿐만 아니라 실패 케이스도 포함하여 학습 효과 향상
 </Callout>
 
 ---
