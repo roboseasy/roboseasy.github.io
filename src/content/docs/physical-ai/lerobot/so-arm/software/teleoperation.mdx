@@ -4,6 +4,7 @@ description: '리더-팔로워 텔레오퍼레이션 및 카메라 활용법'
 ---
 
 import Callout from '../../../../../../components/Callout.astro';
+import Tabs from '../../../../../../components/Tabs.astro';
 
 # SO-ARM 리더-팔로워 텔레오퍼레이션 가이드
 
@@ -68,41 +69,14 @@ source .venv/bin/activate
 
 ---
 
-## 3. 캘리브레이션 필수
+## 3. 캘리브레이션
 
 리더/팔로워 모두 캘리브레이션을 반드시 진행해야 합니다.  
 자세한 방법은 [SO-ARM 캘리브레이션 가이드](/docs/physical-ai/lerobot/so-arm/software/calibration) 참고.
 
 ---
 
-
-## 4. 텔레오퍼레이션 실행 예시
-
-SO-ARM 두 대를 Ubuntu에서 USB로 연결한 환경 기준 예시입니다.
-
-```bash
-lerobot-teleoperate \
-  --robot.type=so101_follower \
-  --robot.port=/dev/ttyACM1 \
-  --robot.id=follower \
-  --teleop.type=so101_leader \
-  --teleop.port=/dev/ttyACM0 \
-  --teleop.id=leader \
-  --display_data=false
-```
-
-| 옵션명           | 설명                       | 예시 값         |
-|------------------|----------------------------|-----------------|
-| --robot.type     | 팔로워 로봇 타입           | so101_follower  |
-| --robot.port     | 팔로워 USB 포트            | /dev/ttyACM1    |
-| --robot.id       | 팔로워 이름                | follower        |
-| --teleop.type    | 리더 로봇 타입             | so101_leader    |
-| --teleop.port    | 리더 USB 포트              | /dev/ttyACM0    |
-| --teleop.id      | 리더 이름                  | leader          |
-
----
-
-## 5. 카메라 옵션 및 index 찾기
+## 4. 카메라 index 찾기
 
 ### 카메라 index, 스펙, fps 확인
 
@@ -140,24 +114,59 @@ Camera#1:
 --------------------
 ```
 
-### 카메라 옵션 적용 예시
+---
 
-```bash
-lerobot-teleoperate \
-    --teleop.type=so101_leader \
-    --teleop.port=/dev/ttyACM0 \
-    --teleop.id=leader \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM1 \
-    --robot.id=follower \
-    --robot.cameras='{ 
-        top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
-        wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
-        belly: {type: opencv, index_or_path: 6, width: 640, height: 480, fps: 25},
-    }' \
-  --display_data=true
 
-```
+## 5. 텔레오퍼레이션 실행 예시
+
+SO-ARM 두 대를 Ubuntu에서 USB로 연결한 환경 기준 예시입니다.
+
+
+<Tabs tabs={['기본 텔레옵', '카메라 추가 설정']}>
+  <div class="tab-panel">
+    ```bash
+    # 카메라 없이 기본 텔레옵
+    lerobot-teleoperate \
+      --robot.type=so101_follower \
+      --robot.port=/dev/ttyACM1 \
+      --robot.id=follower \
+      --teleop.type=so101_leader \
+      --teleop.port=/dev/ttyACM0 \
+      --teleop.id=leader \
+      --display_data=false
+    ```
+  </div>
+  <div class="tab-panel">
+    ```bash
+    # 카메라 추가 설정
+    lerobot-teleoperate \
+      --teleop.type=so101_leader \
+      --teleop.port=/dev/ttyACM0 \
+      --teleop.id=leader \
+      --robot.type=so101_follower \
+      --robot.port=/dev/ttyACM1 \
+      --robot.id=follower \
+      --robot.cameras='{ 
+          top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+          wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+          belly: {type: opencv, index_or_path: 6, width: 640, height: 480, fps: 25},
+      }' \
+      --display_data=true
+    ```
+  </div>
+</Tabs>
+
+
+| 옵션명           | 설명                       | 예시 값         |
+|------------------|----------------------------|-----------------|
+| --robot.type     | 팔로워 로봇 타입           | so101_follower  |
+| --robot.port     | 팔로워 USB 포트            | /dev/ttyACM1    |
+| --robot.id       | 팔로워 이름                | follower        |
+| --teleop.type    | 리더 로봇 타입             | so101_leader    |
+| --teleop.port    | 리더 USB 포트              | /dev/ttyACM0    |
+| --teleop.id      | 리더 이름                  | leader          |
+
+---
 
 - 여러 카메라를 동시에 사용할 수 있습니다.
 - 각 카메라의 index, 해상도, fps는 `lerobot.find_cameras`로 확인한 값 사용
@@ -198,4 +207,11 @@ lerobot-teleoperate \
 
 ## 다음 단계
 
-- 텔레오퍼레이션이 정상 동작하면 [데이터 수집](/docs/physical-ai/lerobot/so-arm/software/data-collection) 및 [모델 학습](/docs/physical-ai/lerobot/so-arm/software/training)으로 이어집니다.
+teleoperation을 완료 하였다면,
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 2rem 0;">
+  <a href="/docs/physical-ai/lerobot/so-arm/software/data-collection" style="padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); text-decoration: none; transition: all var(--transition-base);">
+    <h3 style="margin: 0 0 0.5rem 0; color: var(--color-accent);"><i class="fas fa-cog"></i> Record & Replay </h3>
+    <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">VLA 모델을 훈련시키기 위해 데이터셋을 수집합니다.</p>
+  </a>
+</div>

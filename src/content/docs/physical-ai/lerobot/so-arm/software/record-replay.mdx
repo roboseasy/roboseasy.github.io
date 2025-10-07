@@ -163,54 +163,60 @@ export TASK_NAME="pick_and_place"
 export HF_USER="your_username"
 ```
 
-```bash
-lerobot-record \
-    --teleop.type=so101_leader \
-    --teleop.port=/dev/ttyACM0 \
-    --teleop.id=leader \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM1 \
-    --robot.id=follower \
-    --robot.cameras='{ 
-        top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
-        wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
-    }' \
-    --dataset.single_task=${TASK_NAME} \
-    --dataset.repo_id=${HF_USER}/${TASK_NAME} \
-    --dataset.num_episodes=25 \
-    --dataset.episode_time_s=15 \
-    --dataset.reset_time_s=3 \
-    --display_data=true
-```
-
 따로 HuggingFace 자동 업로드를 비활성화하지 않았다면, 
 데이터 수집이 완료 후 곧바로 HuggingFace에서 자신의 데이터셋 레파지토리에 
 데이터셋이 자동으로 업로드 됩니다.
 
-### HuggingFace 자동 업로드 비활성화 (로컬 저장)
-
 `--dataset.push_to_hub=false` 를 추가하면, 로컬 저장후, HuggingFace에 자동으로 업로드하지 않습니다.
 
-```bash
-lerobot-record \
-    --teleop.type=so101_leader \
-    --teleop.port=/dev/ttyACM0 \
-    --teleop.id=leader \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM1 \
-    --robot.id=follower \
-    --robot.cameras='{ 
-        top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
-        wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
-    }' \
-    --dataset.single_task=${TASK_NAME} \
-    --dataset.repo_id=${HF_USER}/${TASK_NAME} \
-    --dataset.num_episodes=25 \
-    --dataset.episode_time_s=15 \
-    --dataset.reset_time_s=3 \
-    --display_data=true \
-    --dataset.push_to_hub=false
-```
+
+<Tabs tabs={['자동 업로드', '자동 업로드 비활성화']}>
+  <div class="tab-panel">
+    ```bash
+    # 데이터 수집 후 허깅페이스에 자동 업로드 
+    lerobot-record \
+        --teleop.type=so101_leader \
+        --teleop.port=/dev/ttyACM0 \
+        --teleop.id=leader \
+        --robot.type=so101_follower \
+        --robot.port=/dev/ttyACM1 \
+        --robot.id=follower \
+        --robot.cameras='{ 
+            top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+            wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+        }' \
+        --dataset.single_task=${TASK_NAME} \
+        --dataset.repo_id=${HF_USER}/${TASK_NAME} \
+        --dataset.num_episodes=45 \
+        --dataset.episode_time_s=15 \
+        --dataset.reset_time_s=3 \
+        --display_data=true
+    ```
+  </div>
+  <div class="tab-panel">
+    ```bash
+    # 데이터 수집 후 허깅페이스에 자동 업로드 비활성화
+    lerobot-record \
+        --teleop.type=so101_leader \
+        --teleop.port=/dev/ttyACM0 \
+        --teleop.id=leader \
+        --robot.type=so101_follower \
+        --robot.port=/dev/ttyACM1 \
+        --robot.id=follower \
+        --robot.cameras='{ 
+            top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+            wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+        }' \
+        --dataset.single_task=${TASK_NAME} \
+        --dataset.repo_id=${HF_USER}/${TASK_NAME} \
+        --dataset.num_episodes=45 \
+        --dataset.episode_time_s=15 \
+        --dataset.reset_time_s=3 \
+        --display_data=true \
+        --dataset.push_to_hub=false
+    ```
+  </div>
+</Tabs>
 
 
 ### 주요 Record 옵션 설명
@@ -591,8 +597,8 @@ Record & Replay 설정이 완료되었다면:
     <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">저희의 튜토리얼 Task를 Pick&Place로 설정합니다.</p>
   </a>
   
-  <a href="/docs/physical-ai/lerobot/so-arm/software/data-collection" style="padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); text-decoration: none;">
-    <h3 style="margin: 0 0 0.5rem 0; color: var(--color-accent);"><i class="fas fa-database"></i> 데이터 수집</h3>
-    <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">데이터셋 수집</p>
+  <a href="/docs/physical-ai/lerobot/so-arm/policy/act" style="padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); text-decoration: none;">
+    <h3 style="margin: 0 0 0.5rem 0; color: var(--color-accent);"><i class="fas fa-database"></i> ACT 모델 학습</h3>
+    <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">기초 VLA, ACT 모델을 학습시켜봅니다.</p>
   </a>
 </div>

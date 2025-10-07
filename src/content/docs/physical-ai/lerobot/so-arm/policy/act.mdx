@@ -13,7 +13,9 @@ ACT는 복잡한 로봇 조작 작업을 위한 혁신적인 모방 학습 알�
 <Callout type="tip" title="ACT의 특징">
   - **Action Chunking**: 단일 액션이 아닌 액션 시퀀스 예측
   - **Temporal Ensembling**: 부드러운 동작을 위한 시간적 앙상블
-  - **빠른 학습**: RTX 3090에서 5시간 내 학습 완료
+  - **빠른 학습**: 
+    + RTX 3090에서 5시간 내 학습 완료
+    + A100에서 1.5시간 내 학습 완료
   - **SO-ARM101 성공 사례 다수**: 저가의 하드웨어에서도 간단한 작업이 완수된 사례가 많음
 </Callout>
 
@@ -25,6 +27,27 @@ ACT는 복잡한 로봇 조작 작업을 위한 혁신적인 모방 학습 알�
   - 꽤 잘 되는데... **Overfit이 심합니다**. 조명이나 물체 등 환경이 변하면 안 되는 경우가 많습니다.
   - 그래도 처음 시작하기엔 아주 좋은 모델입니다! 👍
 </Callout>
+
+<Callout type="tip" title="Jupyter Notebook 예제">
+  **LeRobot 에서 제공하는 Jupyter Notebook을 Colab에서 돌려보기:**
+  - GPU가 없으신 분들을 위해 Colab에서 자신의 데이터셋을 올리고 학습을 진행한 뒤 모델을 허깅페이스에 업로드 하세요.
+  - 그리고 자신의 Host PC에서 모델을 GPU 없이 실행할 수 있습니다. 
+  <div style="text-align: center;">
+    <a 
+      href="https://github.com/huggingface/notebooks/blob/main/lerobot/training-act.ipynb" 
+      target="_blank"
+      style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--color-accent); color: var(--color-bg); text-decoration: none; border-radius: var(--radius-md); font-weight: 600; transition: all var(--transition-base); height: 44px; line-height: 1;"
+      onmouseover="this.style.opacity='0.9'"
+      onmouseout="this.style.opacity='1'"
+    >
+      <i class="fab fa-github" style="font-size: 1.2em; vertical-align: middle;"></i>
+      <span style="display: inline-block; vertical-align: middle;">ACT 노트북 열기</span>
+    </a>
+  </div>
+
+</Callout>
+
+
 
 ## 개요
 
@@ -52,14 +75,12 @@ ACT는 Stanford에서 개발한 알고리즘으로, 다음과 같은 핵심 혁�
 
 ### 1. 데이터셋 준비
 
-```bash
-# 로봇 시연 데이터 수집
-python -m lerobot.record \
-    --robot.type=so101 \
-    --dataset.repo_id=${HF_USER}/act_dataset \
-    --dataset.num_episodes=50 \
-    --dataset.single_task="Pick and place object"
-```
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 2rem 0;">
+  <a href="/docs/physical-ai/lerobot/so-arm/software/data-collection" style="padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); text-decoration: none; transition: all var(--transition-base);">
+    <h3 style="margin: 0 0 0.5rem 0; color: var(--color-accent);"><i class="fas fa-cog"></i> Record & Replay </h3>
+    <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">VLA 모델을 훈련시키기 위해 데이터셋을 수집합니다.</p>
+  </a>
+</div>
 
 <Callout type="tip" title="데이터 수집 팁">
   - 최소 50개 에피소드 (10분 분량, 에피소드 길이마다 다를 수 있음)
@@ -69,49 +90,94 @@ python -m lerobot.record \
 
 ### 2. 학습
 
-<Tabs tabs={['기본 학습', '고급 설정']}>
+```bash
+export TASK_NAME="pick_and_place"
+export HF_USER="HueyWoo"
+```
+
+<Tabs tabs={['기본 설정', '추가 설정']}>
   <div class="tab-panel">
     ```bash
-    # ACT 모델 학습
-    python -m lerobot.scripts.train \
-        --dataset.repo_id=${HF_USER}/act_dataset \
-        --policy.type=act \
-        --output_dir=outputs/act_policy \
-        --training.num_epochs=100 \
-        --training.batch_size=64
+    # ACT 모델 학습 기본 설정
+    lerobot-train \
+      --dataset.repo_id=${HF_USER}/${TASK_NAME} \
+      --policy.repo_id=${HF_USER}/${TASK_NAME} \
+      --policy.type=act \
+      --policy.device=cuda \
+      --job_name=act_so101 \
+      --output_dir=outputs/train/act_so101/${TASK_NAME} \
+      --wandb.enable=true
     ```
   </div>
   <div class="tab-panel">
     ```bash
-    # 고급 하이퍼파라미터 설정
-    python -m lerobot.scripts.train \
-        --dataset.repo_id=${HF_USER}/act_dataset \
-        --policy.type=act \
-        --policy.chunk_size=100 \
-        --policy.n_encoder_layers=4 \
-        --policy.n_decoder_layers=7 \
-        --policy.n_heads=8 \
-        --policy.hidden_dim=512 \
-        --policy.dim_feedforward=3200 \
-        --policy.kl_weight=10.0 \
-        --training.learning_rate=1e-4 \
-        --training.weight_decay=1e-4 \
-        --wandb.enable=true
+    # 추가 설정
+    lerobot-train \
+      --dataset.repo_id=${HF_USER}/${TASK_NAME} \
+      --policy.repo_id=${HF_USER}/${TASK_NAME} \
+      --policy.type=act \
+      --policy.device=cuda \
+      --job_name=act_so101 \
+      --output_dir=outputs/train/act_so101/${TASK_NAME} \
+      --wandb.enable=true \
+      --steps=10_000 \
+      --save_checkpoint=true \
+      --save_freq=5_000
+
     ```
   </div>
 </Tabs>
 
 ### 3. 추론 및 실행
 
-```bash
-# 학습된 정책으로 로봇 제어
-python -m lerobot.scripts.eval \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyUSB0 \
-    --policy.path=outputs/act_policy/checkpoint_best.pt \
-    --policy.chunk_size=100 \
-    --dataset.num_episodes=20
-```
+기본으로 제공되는 추론 및 실행 코드는 기본적으로 record 코드와 같습니다.
+
+따라서 추론 에피소드를 실행하면 해당 에피소드는 데이터셋 record와 같이 저장됩니다.
+
+만약, 매 에피소드 별로 끊어지고 저장되는게 싫다면 에피소드 타임을 아주 길게 하면 됩니다.
+
+<Tabs tabs={['기본 설정', '시간 늘리기']}>
+  <div class="tab-panel">
+    ```bash
+    # 추론 및 실행 기본 설정
+    lerobot-record \
+      --robot.type=so101_follower \
+      --robot.port=/dev/ttyACM0 \
+      --robot.id=follower \
+      --robot.cameras='{ 
+          top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+          wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+      }' \
+      --dataset.repo_id=${HF_USER}/${TASK_NAME} \
+      --dataset.single_task=${TASK_NAME} \
+      --policy.path=${HF_USER}/${TASK_NAME} \
+      --dataset.num_episodes=50 \
+      --dataset.episode_time_s=15 \
+      --dataset.reset_time_s=1 \
+      --display_data=true
+    ```
+  </div>
+  <div class="tab-panel">
+    ```bash
+    # 추론 및 실행 시간 설정을 길게 해서 끊기지 않고 반복 작업 수행
+    lerobot-record \
+      --robot.type=so101_follower \
+      --robot.port=/dev/ttyACM0 \
+      --robot.id=follower \
+      --robot.cameras='{ 
+          top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+          wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+      }' \
+      --dataset.repo_id=${HF_USER}/${TASK_NAME} \
+      --dataset.single_task=${TASK_NAME} \
+      --policy.path=${HF_USER}/${TASK_NAME} \
+      --dataset.episode_time_s=100_000 \
+      --dataset.reset_time_s=1 \
+      --display_data=true
+    ```
+  </div>
+</Tabs>
+
 
 
 ## SmolVLA와의 비교
