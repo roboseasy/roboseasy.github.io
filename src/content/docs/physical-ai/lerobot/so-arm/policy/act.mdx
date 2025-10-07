@@ -94,7 +94,7 @@ export TASK_NAME="pick_and_place"
 export HF_USER="Your_HuggingFace_Account"
 ```
 
-<Tabs tabs={['기본 설정', '추가 설정']}>
+<Tabs tabs={['기본 설정', '추가 설정', '학습 재개']}>
   <div class="tab-panel">
     ```bash
     # ACT 모델 학습 기본 설정
@@ -123,10 +123,18 @@ export HF_USER="Your_HuggingFace_Account"
       --steps=100_000 \
       --save_checkpoint=true \
       --save_freq=10_000
-
+    ```
+  </div>
+  <div class="tab-panel">
+    ```bash
+    # 학습 재개
+    lerobot-train \
+      --config_path=outputs/train/act_so101/${TASK_NAME}/checkpoints/last/pretrained_model/train_config.json \
+      --resume=true
     ```
   </div>
 </Tabs>
+
 
 ### 3. 평가 및 실행
 
