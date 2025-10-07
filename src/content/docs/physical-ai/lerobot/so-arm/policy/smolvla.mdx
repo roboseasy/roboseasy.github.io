@@ -90,15 +90,15 @@ export TASK_NAME="pick_and_place"
 export HF_USER="Your_HuggingFace_Account"
 ```
 
+
 <Tabs tabs={['기본 설정', '추가 설정', '학습 재개']}>
   <div class="tab-panel">
     ```bash
     # ACT 모델 학습 기본 설정
-    lerobot-train \
+    CUDA_VISIBLE_DEVICES=0 lerobot-train \
       --dataset.repo_id=${HF_USER}/${TASK_NAME} \
-      --policy.repo_id=${HF_USER}/${TASK_NAME} \
-      --policy.type=smolvla \
-      --policy.pretrained_path="lerobot/smolvla_base" \
+      --policy.repo_id=${HF_USER}/smolvla_${TASK_NAME} \
+      --policy.path=roboseasy/smolvla_base \
       --policy.device=cuda \
       --job_name=smolvla_so101 \
       --output_dir=outputs/train/smolvla_so101/${TASK_NAME} \
@@ -108,11 +108,10 @@ export HF_USER="Your_HuggingFace_Account"
   <div class="tab-panel">
     ```bash
     # 추가 설정
-    lerobot-train \
+    CUDA_VISIBLE_DEVICES=0 lerobot-train \
       --dataset.repo_id=${HF_USER}/${TASK_NAME} \
       --policy.repo_id=${HF_USER}/smolvla_${TASK_NAME} \
-      --policy.type=smolvla \
-      --policy.pretrained_path="lerobot/smolvla_base" \
+      --policy.path=roboseasy/smolvla_base \
       --policy.device=cuda \
       --policy.freeze_vision_encoder=false \
       --job_name=smolvla_so101 \
@@ -122,12 +121,13 @@ export HF_USER="Your_HuggingFace_Account"
       --steps=100_000 \
       --save_checkpoint=true \
       --save_freq=10_000
+
     ```
   </div>
   <div class="tab-panel">
     ```bash
     # 학습 재개
-    lerobot-train \
+    CUDA_VISIBLE_DEVICES=0 lerobot-train \
       --config_path=outputs/train/smolvla_so101/${TASK_NAME}/checkpoints/last/pretrained_model/train_config.json \
       --resume=true
     ```
