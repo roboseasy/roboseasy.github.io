@@ -18,7 +18,7 @@ import Tabs from '../../../../../../components/Tabs.astro';
 
 ## 개요
 
-Record & Replay는 로봇 학습의 핵심 과정으로, **텔레오퍼레이션을 통해 데이터를 수집(Record)**하고 **수집된 데이터를 로봇이 재생(Replay)**하는 기능입니다.
+Record & Replay는 로봇 학습의 핵심 과정으로, **텔레오퍼레이션을 통해 데이터를 수집(Record)** 하고 **수집된 데이터를 로봇이 재생(Replay)** 하는 기능입니다.
 
 <Callout type="info">
 Record & Replay 과정을 통해 로봇은 인간의 시연을 학습하여 동일한 작업을 자율적으로 수행할 수 있게 됩니다.
@@ -29,7 +29,7 @@ Record & Replay 과정을 통해 로봇은 인간의 시연을 학습하여 동�
 1. **Calibration**: 리더 암과 팔로워 암 캘리브레이션
 2. **Record**: 텔레오퍼레이션으로 작업 데이터 수집
 3. **Replay**: 수집된 데이터로 로봇 동작 재생
-4. **Training**: 수집된 데이터로 AI 모델 학습 (선택사항)
+4. **Training**: 수집된 데이터로 AI 모델 학습
 
 ---
 
@@ -187,9 +187,9 @@ lerobot-record \
 데이터 수집이 완료 후 곧바로 HuggingFace에서 자신의 데이터셋 레파지토리에 
 데이터셋이 자동으로 업로드 됩니다.
 
-### HuggingFace 자동 업로드 비활성화
+### HuggingFace 자동 업로드 비활성화 (로컬 저장)
 
-`--dataset.push_to_hub=false` 를 추가해 줍니다.
+`--dataset.push_to_hub=false` 를 추가하면, 로컬 저장후, HuggingFace에 자동으로 업로드하지 않습니다.
 
 ```bash
 lerobot-record \
@@ -272,26 +272,8 @@ lerobot-record \
 </Callout>
 
 
-### 로컬 저장의 장단점
 
-<Callout type="info">
-**로컬 저장의 장점:**
-- 데이터 프라이버시 보장
-- 네트워크 연결 불필요
-- 빠른 저장 속도
-- 민감한 데이터 보호
-- 오프라인 환경에서도 작업 가능
-</Callout>
-
-<Callout type="warning">
-**로컬 저장의 단점:**
-- 다른 사람과 공유하기 어려움
-- 백업 및 관리 책임
-- 하드웨어 고장 시 데이터 손실 위험
-- 협업 프로젝트에서 불편함
-</Callout>
-
-#### 나중에 수동 업로드
+#### 로컬 저장 후 나중에 허깅페이스 수동 업로드
 
 로컬에서 작업 완료 후 선택적으로 HuggingFace Hub에 업로드할 수 있습니다:
 
@@ -303,19 +285,6 @@ dataset = LeRobotDataset('local_dataset/so101_pick_place', root='./my_datasets')
 dataset.push_to_hub('${HF_USER}/so101_pick_place', private=False)
 print('Upload completed!')
 "
-```
-
-#### HuggingFace Hub 업로드
-
-데이터셋을 HuggingFace Hub에 업로드하여 공유하고 관리할 수 있습니다:
-
-```bash
-# 자동 업로드 (기본 동작)
-lerobot-record \
-    --dataset.push_to_hub=true \
-    --dataset.private=false \
-    --dataset.tags="[robotics, manipulation, so101]" \
-    # ... 기타 옵션들
 ```
 
 ---
@@ -616,7 +585,7 @@ lerobot-record \
 <Callout type="warning">
 **Resume 사용 시 주의사항:**
 - `--dataset.num_episodes`는 **추가로 수집할** 에피소드 수를 입력합니다
-- 기존에 115개가 있고 5개를 더 수집하려면 `--dataset.num_episodes=5`로 설정
+- 5개를 추가 수집하려면 `--dataset.num_episodes=5`로 설정
 - 모든 다른 설정(카메라, 태스크 등)은 기존과 동일하게 유지해야 합니다
 </Callout>
 
