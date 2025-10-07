@@ -29,12 +29,12 @@ ACT는 복잡한 로봇 조작 작업을 위한 혁신적인 모방 학습 알�
 </Callout>
 
 <Callout type="tip" title="Jupyter Notebook 예제">
-  **LeRobot 에서 제공하는 Jupyter Notebook을 Colab에서 돌려보기:**
+  **Colab에서 돌려보기:**
   - GPU가 없으신 분들을 위해 Colab에서 자신의 데이터셋을 올리고 학습을 진행한 뒤 모델을 허깅페이스에 업로드 하세요.
   - 그리고 자신의 Host PC에서 모델을 GPU 없이 실행할 수 있습니다. 
   <div style="text-align: center;">
     <a 
-      href="https://github.com/huggingface/notebooks/blob/main/lerobot/training-act.ipynb" 
+      href="https://github.com/roboseasy/notebook/blob/main/lerobot/training-act.ipynb" 
       target="_blank"
       style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--color-accent); color: var(--color-bg); text-decoration: none; border-radius: var(--radius-md); font-weight: 600; transition: all var(--transition-base); height: 44px; line-height: 1;"
       onmouseover="this.style.opacity='0.9'"
@@ -119,6 +119,7 @@ export HF_USER="Your_HuggingFace_Account"
       --job_name=act_so101 \
       --output_dir=outputs/train/act_so101/${TASK_NAME} \
       --wandb.enable=true \
+      --batch_size=64 \
       --steps=100_000 \
       --save_checkpoint=true \
       --save_freq=10_000
