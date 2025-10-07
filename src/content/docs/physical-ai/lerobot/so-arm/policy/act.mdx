@@ -134,7 +134,11 @@ export HF_USER="Your_HuggingFace_Account"
 
 따라서 추론 에피소드를 실행하면 해당 에피소드는 데이터셋 record와 같이 저장됩니다.
 
-만약, 매 에피소드 별로 끊어지고 저장되는게 싫다면 에피소드 타임을 아주 길게 하면 됩니다.
+이때, 코드 자체에서 훈련 데이터셋과 평가 데이터셋을 구분하기 위해, 반드시 `--dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \` 이 옵션에서 `eval_` 을 붙여줘야 합니다.
+
+그렇지 않으면, 오류가 발생합니다.
+
+또한, 만약 매 에피소드 별로 끊어지고 저장되는게 싫다면 에피소드 타임을 아주 길게 하면 됩니다.
 
 <Tabs tabs={['기본 설정', '시간 늘리기']}>
   <div class="tab-panel">
@@ -148,7 +152,7 @@ export HF_USER="Your_HuggingFace_Account"
           top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
           wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
       }' \
-      --dataset.repo_id=${HF_USER}/${TASK_NAME} \
+      --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
       --dataset.single_task=${TASK_NAME} \
       --policy.path=${HF_USER}/${TASK_NAME} \
       --dataset.num_episodes=50 \
@@ -161,19 +165,19 @@ export HF_USER="Your_HuggingFace_Account"
     ```bash
     # 추론 및 실행 시간 설정을 길게 해서 끊기지 않고 반복 작업 수행
     lerobot-record \
-      --robot.type=so101_follower \
-      --robot.port=/dev/ttyACM0 \
-      --robot.id=follower \
-      --robot.cameras='{ 
-          top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
-          wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
-      }' \
-      --dataset.repo_id=${HF_USER}/${TASK_NAME} \
-      --dataset.single_task=${TASK_NAME} \
-      --policy.path=${HF_USER}/${TASK_NAME} \
-      --dataset.episode_time_s=100_000 \
-      --dataset.reset_time_s=1 \
-      --display_data=true
+        --robot.type=so101_follower \
+        --robot.port=/dev/ttyACM1 \
+        --robot.id=follower \
+        --robot.cameras='{ 
+            top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+            wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+        }' \
+        --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
+        --dataset.single_task=eval_${TASK_NAME} \
+        --policy.path=${HF_USER}/${TASK_NAME} \
+        --dataset.episode_time_s=100_000 \
+        --dataset.reset_time_s=1 \
+        --display_data=true 
     ```
   </div>
 </Tabs>
