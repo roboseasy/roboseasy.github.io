@@ -60,16 +60,9 @@ SmolVLA는 다음과 같은 입력을 통합하여 처리합니다:
 uv pip install -e ".[smolvla]"
 ```
 
-### 2. 사전 학습 모델 불러오기
+### 2. 데이터셋 준비
 
-```python
-from lerobot.policies.smolvla import SmolVLAPolicy
-
-# 기본 모델 불러오기
-policy = SmolVLAPolicy.from_pretrained("lerobot/smolvla_base")
-```
-
-### 3. 데이터셋 준비
+act 모델 학습을 위해 수집한 데이터셋과 달리 ` --dataset.single_task`에피소드를 명확한 자연어 명령 레이블링을 해주어야 합니다.
 
 <Callout type="info" title="데이터 수집 권장사항">
   - 최소 50개 에피소드 수집
@@ -81,12 +74,16 @@ policy = SmolVLAPolicy.from_pretrained("lerobot/smolvla_base")
 # 자연어 명령과 함께 데이터 수집
 python -m lerobot.record \
     --robot.type=so101 \
-    --dataset.repo_id=${HF_USER}/my_vla_dataset \
+    --dataset.repo_id=${HF_USER}/${TASK_NAME} \
     --dataset.num_episodes=50 \
     --dataset.single_task="Pick up the red pen and place it the pencil case"
 ```
 
-### 4. 파인튜닝
+### 3. 파인튜닝
+
+act 모델과 달리 사전 학습된 모델을 load해서 파인튜닝하기 때문에, 사전 학습된 모델이 필요합니다.
+
+해당 위치에 사전 학습된 모델이 없다면, 코드에서 자동으로 허깅페이스의 사전 학습된 모델을 다운로드 합니다.
 
 ```bash
 export TASK_NAME="pick_and_place"
@@ -101,7 +98,7 @@ export HF_USER="Your_HuggingFace_Account"
       --dataset.repo_id=${HF_USER}/${TASK_NAME} \
       --policy.repo_id=${HF_USER}/${TASK_NAME} \
       --policy.type=smolvla \
-      --policy.pretrained_model="lerobot/smolvla_base" \
+      --policy.pretrained_path="lerobot/smolvla_base" \
       --policy.device=cuda \
       --job_name=smolvla_so101 \
       --output_dir=outputs/train/smolvla_so101/${TASK_NAME} \
@@ -115,11 +112,9 @@ export HF_USER="Your_HuggingFace_Account"
       --dataset.repo_id=${HF_USER}/${TASK_NAME} \
       --policy.repo_id=${HF_USER}/smolvla_${TASK_NAME} \
       --policy.type=smolvla \
-      --policy.pretrained_model="lerobot/smolvla_base" \
+      --policy.pretrained_path="lerobot/smolvla_base" \
       --policy.device=cuda \
       --policy.freeze_vision_encoder=false \
-      --policy.learning_rate=5e-5 \
-      --policy.weight_decay=0.01 \
       --job_name=smolvla_so101 \
       --output_dir=outputs/train/smolvla_so101/${TASK_NAME} \
       --wandb.enable=true \
