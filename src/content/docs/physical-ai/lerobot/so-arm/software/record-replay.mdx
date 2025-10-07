@@ -122,9 +122,11 @@ lerobot-record \
         top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
         wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
     }' \
+    --dataset.single_task=${TASK_NAME} \
     --dataset.repo_id=${HF_USER}/${TASK_NAME} \
     --dataset.num_episodes=25 \
-    --dataset.single_task=${TASK_NAME} \
+    --dataset.episode_time_s=15 \ 
+    --dataset.reset_time_s=3 \
     --display_data=true
 ```
 
@@ -314,9 +316,11 @@ lerobot-record \
         top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
         wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
     }' \
+    --dataset.single_task=${TASK_NAME} \
     --dataset.repo_id=${HF_USER}/${TASK_NAME} \
     --dataset.num_episodes=5 \
-    --dataset.single_task=${TASK_NAME} \
+    --dataset.episode_time_s=15 \ 
+    --dataset.reset_time_s=3 \
     --display_data=true \
     --resume=true
 ```
@@ -390,57 +394,32 @@ print(f'총 프레임 수: {dataset.num_frames}')
 #### HuggingFace 자동 업로드 비활성화
 
 ```bash
-# 로컬 전용 데이터 수집 (기본)
+export TASK_NAME="pick_and_place"
+export DATASET_PATH="your_local_path"
+```
+
+```bash
+# 사용자 지정 경로에 데이터 수집 
+
 lerobot-record \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM1 \
-    --robot.id=follower \
     --teleop.type=so101_leader \
     --teleop.port=/dev/ttyACM0 \
     --teleop.id=leader \
-    --dataset.repo_id=local_dataset/so101_pick_place \
-    --dataset.num_episodes=10 \
-    --dataset.single_task="Pick up the cube and place it in the box" \
-    --dataset.push_to_hub=false
-```
-
-#### 사용자 지정 경로에 저장
-
-```bash
-# 특정 디렉토리에 저장
-lerobot-record \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM1 \
-    --robot.id=follower \
-    --teleop.type=so101_leader \
-    --teleop.port=/dev/ttyACM0 \
-    --teleop.id=leader \
-    --dataset.repo_id=my_local_dataset/cube_manipulation \
-    --dataset.root=./my_datasets \
-    --dataset.num_episodes=15 \
-    --dataset.single_task="Manipulate colored cubes" \
-    --dataset.push_to_hub=false
-```
-
-#### 카메라 포함 로컬 데이터 수집
-
-```bash
-lerobot-record \
     --robot.type=so101_follower \
     --robot.port=/dev/ttyACM1 \
     --robot.id=follower \
     --robot.cameras='{ 
-        front: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30}
+        top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+        wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
     }' \
-    --teleop.type=so101_leader \
-    --teleop.port=/dev/ttyACM0 \
-    --teleop.id=leader \
-    --dataset.repo_id=local_dataset/visual_manipulation \
-    --dataset.root=./local_datasets \
-    --dataset.num_episodes=20 \
-    --dataset.single_task="Visual manipulation task" \
+    --dataset.single_task=${TASK_NAME} \
+    --dataset.repo_id=${DATASET_PATH}/${TASK_NAME} \
     --dataset.push_to_hub=false \
+    --dataset.num_episodes=5 \
+    --dataset.episode_time_s=15 \ 
+    --dataset.reset_time_s=3 \
     --display_data=true
+
 ```
 
 #### 로컬 저장의 장단점
