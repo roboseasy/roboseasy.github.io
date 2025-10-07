@@ -94,7 +94,7 @@ export HF_USER="Your_HuggingFace_Account"
     # 추가 설정
     lerobot-train \
       --dataset.repo_id=${HF_USER}/${TASK_NAME} \
-      --policy.repo_id=${HF_USER}/${TASK_NAME} \
+      --policy.repo_id=${HF_USER}/smolvla_${TASK_NAME} \
       --policy.type=smolvla \
       --policy.pretrained_model="lerobot/smolvla_base" \
       --policy.device=cuda \
@@ -103,7 +103,7 @@ export HF_USER="Your_HuggingFace_Account"
       --policy.weight_decay=0.01 \
       --job_name=smolvla_so101 \
       --output_dir=outputs/train/smolvla_so101/${TASK_NAME} \
-      --wandb.enable=true
+      --wandb.enable=true \
       --batch_size=8 \
       --steps=100_000 \
       --save_checkpoint=true \
@@ -152,7 +152,7 @@ export HF_USER="Your_HuggingFace_Account"
       }' \
       --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
       --dataset.single_task=${TASK_NAME} \
-      --policy.path=${HF_USER}/${TASK_NAME} \
+      --policy.path=${HF_USER}/smolvla_${TASK_NAME} \
       --dataset.num_episodes=50 \
       --dataset.episode_time_s=15 \
       --dataset.reset_time_s=1 \
@@ -172,7 +172,7 @@ export HF_USER="Your_HuggingFace_Account"
         }' \
         --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
         --dataset.single_task=eval_${TASK_NAME} \
-        --policy.path=${HF_USER}/${TASK_NAME} \
+        --policy.path=${HF_USER}/smolvla_${TASK_NAME} \
         --dataset.episode_time_s=100_000 \
         --dataset.reset_time_s=1 \
         --display_data=true 
