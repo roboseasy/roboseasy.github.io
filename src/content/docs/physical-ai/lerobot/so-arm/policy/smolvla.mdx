@@ -32,7 +32,7 @@ SmolVLA는 다음과 같은 입력을 통합하여 처리합니다:
 - **언어 명령**: 자연어로 된 작업 지시
 - **출력**: 로봇의 다음 동작 시퀀스
 
-## 사용 방법
+## 프로세스
 
 ### 1. 설치
 
@@ -55,7 +55,7 @@ policy = SmolVLAPolicy.from_pretrained("lerobot/smolvla_base")
 <Callout type="info" title="데이터 수집 권장사항">
   - 최소 50개 에피소드 수집
   - 다양한 물체 위치와 상황 포함
-  - 명확한 자연어 명령 레이블링
+  - **명확한 자연어 명령 레이블링**
 </Callout>
 
 ```bash
@@ -64,43 +64,122 @@ python -m lerobot.record \
     --robot.type=so101 \
     --dataset.repo_id=${HF_USER}/my_vla_dataset \
     --dataset.num_episodes=50 \
-    --dataset.single_task="Pick up the red block and place it in the basket"
+    --dataset.single_task="Pick up the red pen and place it the pencil case"
 ```
 
 ### 4. 파인튜닝
 
-<Tabs tabs={['기본 학습', '고급 설정']}>
+```bash
+export TASK_NAME="pick_and_place"
+export HF_USER="Your_HuggingFace_Account"
+```
+
+<Tabs tabs={['기본 설정', '추가 설정', '학습 재개']}>
   <div class="tab-panel">
     ```bash
-    # SmolVLA 파인튜닝
-    python -m lerobot.scripts.train \
-        --dataset.repo_id=${HF_USER}/my_vla_dataset \
-        --policy.type=smolvla \
-        --policy.pretrained_model="lerobot/smolvla_base" \
-        --output_dir=outputs/smolvla_finetuned \
-        --training.num_steps=20000 \
-        --training.batch_size=16
+    # ACT 모델 학습 기본 설정
+    lerobot-train \
+      --dataset.repo_id=${HF_USER}/${TASK_NAME} \
+      --policy.repo_id=${HF_USER}/${TASK_NAME} \
+      --policy.type=smolvla \
+      --policy.pretrained_model="lerobot/smolvla_base" \
+      --policy.device=cuda \
+      --job_name=smolvla_so101 \
+      --output_dir=outputs/train/smolvla_so101/${TASK_NAME} \
+      --wandb.enable=true
     ```
   </div>
   <div class="tab-panel">
     ```bash
-    # 고급 설정으로 학습
-    python -m lerobot.scripts.train \
-        --dataset.repo_id=${HF_USER}/my_vla_dataset \
-        --policy.type=smolvla \
-        --policy.pretrained_model="lerobot/smolvla_base" \
-        --policy.freeze_vision_encoder=false \
-        --policy.learning_rate=5e-5 \
-        --policy.weight_decay=0.01 \
-        --training.num_steps=30000 \
-        --training.batch_size=32 \
-        --training.gradient_accumulation_steps=4 \
-        --wandb.enable=true
+    # 추가 설정
+    lerobot-train \
+      --dataset.repo_id=${HF_USER}/${TASK_NAME} \
+      --policy.repo_id=${HF_USER}/${TASK_NAME} \
+      --policy.type=smolvla \
+      --policy.pretrained_model="lerobot/smolvla_base" \
+      --policy.device=cuda \
+      --policy.freeze_vision_encoder=false \
+      --policy.learning_rate=5e-5 \
+      --policy.weight_decay=0.01 \
+      --job_name=smolvla_so101 \
+      --output_dir=outputs/train/smolvla_so101/${TASK_NAME} \
+      --wandb.enable=true
+      --batch_size=8 \
+      --steps=100_000 \
+      --save_checkpoint=true \
+      --save_freq=10_000
+    ```
+  </div>
+  <div class="tab-panel">
+    ```bash
+    # 학습 재개
+    lerobot-train \
+      --config_path=outputs/train/smolvla_so101/${TASK_NAME}/checkpoints/last/pretrained_model/train_config.json \
+      --resume=true
     ```
   </div>
 </Tabs>
 
-### 5. 추론 및 실행
+
+### 5. 평가 및 실행
+
+기본으로 제공되는 평가 및 실행 코드는 기본적으로 record 코드와 같습니다.
+
+따라서 평가 에피소드를 실행하면 해당 에피소드는 데이터셋 record와 같이 저장됩니다.
+
+이때, 코드 자체에서 훈련 데이터셋과 평가 데이터셋을 구분하기 위해, 반드시 `--dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \` 이 옵션에서 `eval_` 을 붙여줘야 합니다.
+
+그렇지 않으면, 오류가 발생합니다.
+
+또한, 만약 매 에피소드 별로 끊어지고 저장되는게 싫다면 에피소드 타임을 아주 길게 하면 됩니다.
+
+```bash
+export TASK_NAME="pick_and_place"
+export HF_USER="Your_HuggingFace_Account"
+```
+
+<Tabs tabs={['기본 설정', '시간 늘리기']}>
+  <div class="tab-panel">
+    ```bash
+    # 평가 및 실행 기본 설정
+    lerobot-record \
+      --robot.type=so101_follower \
+      --robot.port=/dev/ttyACM0 \
+      --robot.id=follower \
+      --robot.cameras='{ 
+          top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+          wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+      }' \
+      --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
+      --dataset.single_task=${TASK_NAME} \
+      --policy.path=${HF_USER}/${TASK_NAME} \
+      --dataset.num_episodes=50 \
+      --dataset.episode_time_s=15 \
+      --dataset.reset_time_s=1 \
+      --display_data=true
+    ```
+  </div>
+  <div class="tab-panel">
+    ```bash
+    # 평가 및 실행 시간 설정을 길게 해서 끊기지 않고 반복 작업 수행
+    lerobot-record \
+        --robot.type=so101_follower \
+        --robot.port=/dev/ttyACM1 \
+        --robot.id=follower \
+        --robot.cameras='{ 
+            top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+            wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+        }' \
+        --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
+        --dataset.single_task=eval_${TASK_NAME} \
+        --policy.path=${HF_USER}/${TASK_NAME} \
+        --dataset.episode_time_s=100_000 \
+        --dataset.reset_time_s=1 \
+        --display_data=true 
+    ```
+  </div>
+</Tabs>
+
 
 ```bash
 # 학습된 모델로 로봇 제어
@@ -108,7 +187,7 @@ python -m lerobot.record \
     --robot.type=so101_follower \
     --robot.port=/dev/ttyUSB0 \
     --policy.path=${HF_USER}/smolvla_finetuned \
-    --policy.instruction="Pick up the blue cube"
+    --policy.instruction="Pick up the red pen and place it the pencil case"
 ```
 
 ## 성능 최적화
