@@ -64,20 +64,20 @@ uv pip install -e ".[smolvla]"
 
 act 모델 학습을 위해 수집한 데이터셋과 달리 ` --dataset.single_task`에피소드를 명확한 자연어 명령 레이블링을 해주어야 합니다.
 
-<Callout type="info" title="데이터 수집 권장사항">
-  - 최소 50개 에피소드 수집
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 2rem 0;">
+  <a href="/docs/physical-ai/lerobot/so-arm/software/data-collection" style="padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); text-decoration: none; transition: all var(--transition-base);">
+    <h3 style="margin: 0 0 0.5rem 0; color: var(--color-accent);"><i class="fas fa-cog"></i> Record & Replay </h3>
+    <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">VLA 모델을 훈련시키기 위해 데이터셋을 수집합니다.</p>
+  </a>
+</div>
+
+<Callout type="tip" title="데이터 수집 권장사항">
+  - 최소 50개 에피소드 (10분 분량, 에피소드 길이마다 다를 수 있음)
+  - 일관된 속도로 부드럽게 동작
   - 다양한 물체 위치와 상황 포함
   - **명확한 자연어 명령 레이블링**
 </Callout>
 
-```bash
-# 자연어 명령과 함께 데이터 수집
-python -m lerobot.record \
-    --robot.type=so101 \
-    --dataset.repo_id=${HF_USER}/${TASK_NAME} \
-    --dataset.num_episodes=50 \
-    --dataset.single_task="Pick up the red pen and place it the pencil case"
-```
 
 ### 3. 파인튜닝
 
@@ -157,20 +157,21 @@ export HF_USER="Your_HuggingFace_Account"
     ```bash
     # 평가 및 실행 기본 설정
     lerobot-record \
-      --robot.type=so101_follower \
-      --robot.port=/dev/ttyACM0 \
-      --robot.id=follower \
-      --robot.cameras='{ 
-          top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
-          wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
-      }' \
-      --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
-      --dataset.single_task=${TASK_NAME} \
-      --policy.path=${HF_USER}/smolvla_${TASK_NAME} \
-      --dataset.num_episodes=50 \
-      --dataset.episode_time_s=15 \
-      --dataset.reset_time_s=1 \
-      --display_data=true
+        --robot.type=so101_follower \
+        --robot.port=/dev/ttyACM1 \
+        --robot.id=follower \
+        --robot.cameras='{ 
+            top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+            wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+        }' \
+        --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
+        --dataset.single_task=eval_${TASK_NAME} \
+        --dataset.num_episodes=50 \
+        --dataset.episode_time_s=15 \
+        --dataset.reset_time_s=1 \
+        --policy.path=${HF_USER}/${TASK_NAME} \
+        --policy.instruction="Pick up the red pen and place it in the pencil case" \
+        --display_data=true
     ```
   </div>
   <div class="tab-panel">
@@ -186,23 +187,15 @@ export HF_USER="Your_HuggingFace_Account"
         }' \
         --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
         --dataset.single_task=eval_${TASK_NAME} \
-        --policy.path=${HF_USER}/smolvla_${TASK_NAME} \
+        --policy.path=${HF_USER}/${TASK_NAME} \
         --dataset.episode_time_s=100_000 \
         --dataset.reset_time_s=1 \
-        --display_data=true 
+        --policy.instruction="Pick up the red pen and place it in the pencil case" \
+        --display_data=true
     ```
   </div>
 </Tabs>
 
-
-```bash
-# 학습된 모델로 로봇 제어
-python -m lerobot.record \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyUSB0 \
-    --policy.path=${HF_USER}/smolvla_finetuned \
-    --policy.instruction="Pick up the red pen and place it the pencil case"
-```
 
 ## 성능 최적화
 

@@ -81,10 +81,10 @@ ACT는 Stanford에서 개발한 알고리즘으로, 다음과 같은 핵심 혁�
   </a>
 </div>
 
-<Callout type="tip" title="데이터 수집 팁">
+<Callout type="tip" title="데이터 수집 권장사항">
   - 최소 50개 에피소드 (10분 분량, 에피소드 길이마다 다를 수 있음)
-  - 다양한 시작 위치에서 시연
   - 일관된 속도로 부드럽게 동작
+  - 다양한 물체 위치와 상황 포함
 </Callout>
 
 ### 2. 학습
@@ -167,10 +167,10 @@ export HF_USER="Your_HuggingFace_Account"
       }' \
       --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
       --dataset.single_task=${TASK_NAME} \
-      --policy.path=${HF_USER}/${TASK_NAME} \
       --dataset.num_episodes=50 \
       --dataset.episode_time_s=15 \
       --dataset.reset_time_s=1 \
+      --policy.path=${HF_USER}/${TASK_NAME} \
       --display_data=true
     ```
   </div>
@@ -187,9 +187,9 @@ export HF_USER="Your_HuggingFace_Account"
         }' \
         --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
         --dataset.single_task=eval_${TASK_NAME} \
-        --policy.path=${HF_USER}/${TASK_NAME} \
         --dataset.episode_time_s=100_000 \
         --dataset.reset_time_s=1 \
+        --policy.path=${HF_USER}/${TASK_NAME} \
         --display_data=true 
     ```
   </div>
