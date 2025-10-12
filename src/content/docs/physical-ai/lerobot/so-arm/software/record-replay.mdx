@@ -1,5 +1,5 @@
 ---
-title: 'Record & Replay'
+title: 'So-ARM 로봇 팔 데이터 수집 및 재생 가이드y'
 description: 'So-ARM 로봇 팔 데이터 수집 및 재생 가이드'
 ---
 
@@ -33,13 +33,34 @@ Record & Replay 과정을 통해 로봇은 인간의 시연을 학습하여 동�
 
 ---
 
+## 실습 영상
+
+실습 영상을 함께 같이 보면서 같이 진행해 보세요!
+
+<div class="youtube-grid">
+  <div class="youtube-card">
+    <h3>데이터 수집과 재생 가이드 영상</h3>
+    <div class="youtube-embed">
+      <iframe 
+        src="https://www.youtube.com/embed/Ape2Qg_waGA" 
+        title="데이터 수집과 재생 영상"
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+</div>
+
+---
+
 ## 준비 사항
 
 Record & Replay를 시작하기 전에 다음 사항들을 확인해주세요:
 
 ### 하드웨어 준비
 - So-ARM 리더 암과 팔로워 암이 캘리브레이션 완료된 상태
-- USB 포트 연결 상태 확인 (`/dev/ttyACM0`, `/dev/ttyACM1`)
+- USB 포트 연결 상태 확인 (`/dev/so101_leader`, `/dev/so101_follower`)
 - 카메라 연결 (선택사항, 시각 데이터 수집용)
 - 충분한 작업 공간 확보
 
@@ -93,19 +114,8 @@ echo $HF_USER
 - 팀으로 작업할 때 각자의 계정이 자동으로 적용되어 편리합니다
 </Callout>
 
-#### 3. 권한 설정
 
-```bash
-# USB 포트 권한 설정 (Ubuntu)
-sudo chmod 666 /dev/ttyACM0
-sudo chmod 666 /dev/ttyACM1
-
-# 사용자를 dialout 그룹에 추가
-sudo usermod -a -G dialout $USER
-# 로그아웃 후 다시 로그인
-```
-
-#### 4. Rerun 시각화 도구 설치
+#### 3. Rerun 시각화 도구 설치
 
 LeRobot은 데이터 수집과 시각화를 위해 **Rerun**을 사용합니다. 데이터 수집 중 실시간 모니터링(`--display_data=true`)과 수집 완료 후 데이터 분석 모두 Rerun을 통해 이루어집니다.
 
@@ -118,37 +128,27 @@ pip install rerun-sdk
 Rerun은 로봇공학, 컴퓨터 비전, 시뮬레이션 데이터를 위한 강력한 시각화 도구입니다. 시계열 데이터, 이미지, 3D 포인트 클라우드 등을 인터랙티브하게 탐색할 수 있으며, LeRobot의 모든 시각화 기능의 기반이 됩니다.
 </Callout>
 
-### Rerun 뷰어 특징
-
-Rerun 뷰어에서 확인할 수 있는 정보:
-
-#### 1. 카메라 영상
-- 모든 카메라 피드가 실시간으로 표시됨
-- 프레임별로 이미지 탐색 가능
-- 압축된 비디오에서 디코딩된 이미지 확인
-
-#### 2. 로봇 액션 (Action)
-- 각 관절의 목표 위치를 시계열 그래프로 표시
-- 프레임별 액션 값 확인
-- 액션 궤적 분석
-
-#### 3. 로봇 상태 (State)
-- 각 관절의 현재 위치 (관절 공간)
-- 센서 데이터
-- 엔드 이펙터 위치
-
-#### 4. 추가 정보
-- `done`: 에피소드 종료 플래그
-- `reward`: 보상 값 (있는 경우)
-- `next.success`: 성공 여부 (있는 경우)
-
 <Callout type="tip">
-**Rerun 뷰어 탐색 팁:**
-- 타임라인 슬라이더로 프레임 이동
-- 그래프를 확대/축소하여 상세 분석
-- 여러 카메라 뷰를 동시에 비교
-- 특정 시점의 액션-상태 관계 확인
+**Rerun 특징**
+1. 카메라 영상
+    - 모든 카메라 피드가 실시간으로 표시됨
+    - 프레임별로 이미지 탐색 가능
+    - 압축된 비디오에서 디코딩된 이미지 확인
+2. 로봇 액션 (Action)
+    - 각 관절의 목표 위치를 시계열 그래프로 표시
+    - 프레임별 액션 값 확인
+    - 액션 궤적 분석
+3. 로봇 상태 (State)
+    - 각 관절의 현재 위치 (관절 공간)
+    - 센서 데이터
+    - 엔드 이펙터 위치
+4. 추가 정보
+    - `done`: 에피소드 종료 플래그
+    - `reward`: 보상 값 (있는 경우)
+    - `next.success`: 성공 여부 (있는 경우)
+
 </Callout>
+
 
 ---
 
@@ -176,10 +176,10 @@ export HF_USER="your_username"
     # 데이터 수집 후 허깅페이스에 자동 업로드 
     lerobot-record \
         --teleop.type=so101_leader \
-        --teleop.port=/dev/ttyACM0 \
+        --teleop.port=/dev/so101_leader \
         --teleop.id=leader \
         --robot.type=so101_follower \
-        --robot.port=/dev/ttyACM1 \
+        --robot.port=/dev/so101_follower \
         --robot.id=follower \
         --robot.cameras='{ 
             top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
@@ -198,10 +198,10 @@ export HF_USER="your_username"
     # 데이터 수집 후 허깅페이스에 자동 업로드 비활성화
     lerobot-record \
         --teleop.type=so101_leader \
-        --teleop.port=/dev/ttyACM0 \
+        --teleop.port=/dev/so101_leader \
         --teleop.id=leader \
         --robot.type=so101_follower \
-        --robot.port=/dev/ttyACM1 \
+        --robot.port=/dev/so101_follower \
         --robot.id=follower \
         --robot.cameras='{ 
             top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
@@ -218,31 +218,30 @@ export HF_USER="your_username"
   </div>
 </Tabs>
 
+<Callout type="tip">
+**주요 Record 옵션 설명**
+1. 로봇 설정
+    - `--robot.type=so101_follower`: 팔로워 로봇 타입
+    - `--robot.port=/dev/so101_follower`: 팔로워 로봇 포트
+    - `--robot.id=follower`: 팔로워 로봇 고유 ID
+2. 텔레오퍼레이션 설정
+    - `--teleop.type=so101_leader`: 리더 로봇 타입
+    - `--teleop.port=/dev/so101_leader`: 리더 로봇 포트
+    - `--teleop.id=leader`: 리더 로봇 고유 ID
+3. 데이터셋 설정
+    - `--dataset.repo_id`: HuggingFace Hub 데이터셋 이름 (`username/dataset_name`)
+    - `--dataset.num_episodes`: 수집할 에피소드 수
+    - `--dataset.single_task`: 작업에 대한 명확한 설명
+    - `--dataset.fps`: 데이터 수집 주파수 (기본값: 30Hz)
+    - `--dataset.episode_time_s`: 각 에피소드 녹화 시간 (기본값: 60초)
+    - `--dataset.reset_time_s`: 에피소드 간 리셋 시간 (기본값: 60초)
+4. 추가 옵션
+    - `--display_data=true`: 실시간 데이터 시각화
+    - `--dataset.push_to_hub=true`: HuggingFace Hub에 자동 업로드 (기본값)
+    - `--dataset.video=true`: 비디오 인코딩 활성화 (기본값)
 
-### 주요 Record 옵션 설명
+</Callout>
 
-#### 로봇 설정
-- `--robot.type=so101_follower`: 팔로워 로봇 타입
-- `--robot.port=/dev/ttyACM1`: 팔로워 로봇 포트
-- `--robot.id=follower`: 팔로워 로봇 고유 ID
-
-#### 텔레오퍼레이션 설정
-- `--teleop.type=so101_leader`: 리더 로봇 타입
-- `--teleop.port=/dev/ttyACM0`: 리더 로봇 포트
-- `--teleop.id=leader`: 리더 로봇 고유 ID
-
-#### 데이터셋 설정
-- `--dataset.repo_id`: HuggingFace Hub 데이터셋 이름 (`username/dataset_name`)
-- `--dataset.num_episodes`: 수집할 에피소드 수
-- `--dataset.single_task`: 작업에 대한 명확한 설명
-- `--dataset.fps`: 데이터 수집 주파수 (기본값: 30Hz)
-- `--dataset.episode_time_s`: 각 에피소드 녹화 시간 (기본값: 60초)
-- `--dataset.reset_time_s`: 에피소드 간 리셋 시간 (기본값: 60초)
-
-#### 추가 옵션
-- `--display_data=true`: 실시간 데이터 시각화
-- `--dataset.push_to_hub=true`: HuggingFace Hub에 자동 업로드 (기본값)
-- `--dataset.video=true`: 비디오 인코딩 활성화 (기본값)
 
 ### Record 과정
 
@@ -304,19 +303,22 @@ print('Upload completed!')
 ```bash
 lerobot-replay \
     --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM1 \
+    --robot.port=/dev/so101_follower \
     --robot.id=follower \
     --dataset.repo_id=${HF_USER}/${TASK_NAME} \
     --dataset.episode=0
 ```
 
-### 주요 Replay 옵션 설명
+<Callout type="tip">
+**주요 Replay 옵션 설명**
 
 - `--dataset.repo_id`: 재생할 데이터셋 이름
 - `--dataset.episode`: 재생할 특정 에피소드 번호 (0부터 시작)
 - `--dataset.fps`: 재생 속도 조절 (기본값: 원본 데이터의 FPS)
 - `--dataset.root`: 로컬 데이터셋 경로 (선택사항)
 - `--play_sounds=true`: 음성 안내 활성화 (기본값)
+</Callout>
+
 
 
 <Callout type="warning">
@@ -339,10 +341,10 @@ lerobot-replay \
 ```bash
 lerobot-record \
     --teleop.type=so101_leader \
-    --teleop.port=/dev/ttyACM0 \
+    --teleop.port=/dev/so101_leader \
     --teleop.id=leader \
     --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM1 \
+    --robot.port=/dev/so101_follower \
     --robot.id=follower \
     --robot.cameras='{ 
         top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
@@ -366,11 +368,13 @@ lerobot-record \
 
 ### 키보드 단축키
 
-데이터 수집 중 사용할 수 있는 키보드 단축키:
+<Callout type="info" title="데이터 수집 중 키보드 단축키">
+  - **→ (오른쪽 화살표 키)**: 현재 에피소드를 조기 종료하고 다음 에피소드로 이동
+  - **← (왼쪽 화살표 키)**: 현재 에피소드를 취소하고 다시 기록  
+  - **ESC (Esc 키)**: 즉시 세션을 중단하고, 영상을 인코딩한 뒤 데이터셋을 업로드
+</Callout>
 
-- **→ (오른쪽 화살표 키)**: 현재 에피소드를 조기 종료하고 다음 에피소드로 이동
-- **← (왼쪽 화살표 키)**: 현재 에피소드를 취소하고 다시 기록  
-- **ESC (Esc 키)**: 즉시 세션을 중단하고, 영상을 인코딩한 뒤 데이터셋을 업로드
+
 
 ### 데이터 수집 모범 사례
 
@@ -387,16 +391,23 @@ lerobot-record \
 
 ## Visualization (데이터셋 확인)
 
-수집된 데이터를 시각적으로 확인하는 것은 데이터 품질 검증과 문제 진단에 매우 중요합니다. 앞서 설치한 **Rerun**을 사용하여 수집 완료 후 데이터를 상세히 분석할 수 있습니다.
+수집된 데이터를 시각적으로 확인하는 것은 데이터 품질 검증과 문제 진단에 매우 중요합니다. 
+허깅페이스 웹페이지를 통해 확인할 수도 있고, 앞서 설치한 **Rerun**을 사용하여 수집 완료 후 데이터를 상세히 분석할 수 있습니다.
 
-### 환경 변수 설정
+### 방법 1: HuggingFace 웹 플랫폼 사용하기
 
-```bash
-export TASK_NAME="pick_and_place"
-export HF_USER="your_username"
-```
+[HuggingFace 웹 플랫폼](https://huggingface.co/spaces/lerobot/visualize_dataset)
 
-### 방법 1: 로컬 시각화 (기본)
+<img 
+  src="https://i.postimg.cc/NFdVxhyq/huggingface.png" 
+  alt="huggingface" 
+  style={{ width: '80%', borderRadius: '12px', display: 'block', margin: '1rem auto' }}
+/>
+
+여기서 데이터셋을 업로드한 허깅페이스 레파지토리 ID를 입력합니다.
+
+
+### 방법 2: 로컬 시각화 (기본)
 
 가장 간단한 방법으로, 로컬 머신에서 즉시 Rerun 뷰어를 띄워 데이터를 확인합니다:
 
@@ -422,7 +433,7 @@ lerobot-dataset-viz \
 
 서버에 데이터가 있고 로컬에서 확인하고 싶을 때 유용합니다:
 
-#### Step 1: 서버에서 시각화 서버 실행
+#### Step 3: 서버에서 시각화 서버 실행
 
 ```bash
 lerobot-dataset-viz \
@@ -593,7 +604,7 @@ Record & Replay 설정이 완료되었다면:
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 2rem 0;">
   <a href="/docs/physical-ai/lerobot/so-arm/tutorials/imitation-learning" style="padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); text-decoration: none;">
-    <h3 style="margin: 0 0 0.5rem 0; color: var(--color-accent);"><i class="fas fa-brain"></i> Task 설정</h3>
+    <h3 style="margin: 0 0 0.5rem 0; color: var(--color-accent);"><i class="fas fa-brain"></i>테스크 설정</h3>
     <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">저희의 튜토리얼 Task를 Pick&Place로 설정합니다.</p>
   </a>
   

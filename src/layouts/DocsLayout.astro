@@ -18,10 +18,10 @@ const isActivePath = (href: string, current: string) => {
 };
 
 // 현재 경로에 따른 네비게이션 섹션 결정
-const isLeRobotPage = currentPath.includes('/docs/physical-ai/lerobot/intro') || 
-                      currentPath.includes('/docs/physical-ai/lerobot/getting-started') || 
-                      currentPath.includes('/docs/physical-ai/lerobot/hardware') || 
-                      currentPath.includes('/docs/physical-ai/lerobot/software');
+const isLeRobotPage = currentPath.includes('/docs/physical-ai/lerobot/get-start/intro') || 
+                      currentPath.includes('/docs/physical-ai/lerobot/get-start/getting-started') || 
+                      currentPath.includes('/docs/physical-ai/lerobot/get-start/hardware') || 
+                      currentPath.includes('/docs/physical-ai/lerobot/get-start/software');
 
 const isSOArmPage = currentPath.includes('/docs/physical-ai/lerobot/so-arm');
 
@@ -37,10 +37,10 @@ const navigation: NavItem[] = [
   {
     title: 'LeRobot 시작하기',
     items: [
-      { title: '소개', href: '/docs/physical-ai/lerobot/intro' },
-      { title: '시작하기', href: '/docs/physical-ai/lerobot/getting-started' },
-      { title: '하드웨어 선택 가이드', href: '/docs/physical-ai/lerobot/hardware' },
-      { title: '소프트웨어 설치 가이드', href: '/docs/physical-ai/lerobot/software' },
+      { title: '소개', href: '/docs/physical-ai/lerobot/get-start/intro' },
+      { title: '시작하기', href: '/docs/physical-ai/lerobot/get-start/getting-started' },
+      { title: '하드웨어 선택 가이드', href: '/docs/physical-ai/lerobot/get-start/hardware' },
+      { title: '소프트웨어 설치 가이드', href: '/docs/physical-ai/lerobot/get-start/software' },
     ]
   },
   {
@@ -51,6 +51,7 @@ const navigation: NavItem[] = [
         title: '하드웨어',
         items: [
           { title: '조립', href: '/docs/physical-ai/lerobot/so-arm/hardware/assembly' },
+          { title: 'USB 포트 설정', href: '/docs/physical-ai/lerobot/so-arm/hardware/usbport' },
         ]
       },
       {
@@ -62,20 +63,13 @@ const navigation: NavItem[] = [
         ]
       },
       {
-        title: '튜토리얼',
-        items: [
-          { title: '태스크 설정', href: '/docs/physical-ai/lerobot/so-arm/tutorials/imitation-learning' },
-          { title: '데이터 수집', href: '/docs/physical-ai/lerobot/so-arm/software/data-collection' },
-          { title: '학습', href: '/docs/physical-ai/lerobot/so-arm/software/training' },
-        ]
-      },
-      {
         title: 'Policy',
         items: [
           { title: 'ACT', href: '/docs/physical-ai/lerobot/so-arm/policy/act' },
           { title: 'SmolVLA', href: '/docs/physical-ai/lerobot/so-arm/policy/smolvla' },
         ]
-      }
+      },
+     
     ]
   },
   

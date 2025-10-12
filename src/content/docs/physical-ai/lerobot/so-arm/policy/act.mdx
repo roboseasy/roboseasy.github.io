@@ -70,6 +70,27 @@ ACT는 Stanford에서 개발한 알고리즘으로, 다음과 같은 핵심 혁�
   이들을 exponential weighting으로 평균하여 최종 액션 결정
 </Callout>
 
+
+## 실습 영상
+
+실습 영상을 함께 같이 보면서 같이 진행해 보세요!
+
+<div class="youtube-grid">
+  <div class="youtube-card">
+    <h3>ACT 학습과 실행 가이드 영상</h3>
+    <div class="youtube-embed">
+      <iframe 
+        src="https://www.youtube.com/embed/ILz0K2XjZF8" 
+        title="ACT 학습과 실행 가이드 영상"
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+</div>
+
+
 ## 프로세스
 
 ### 1. 데이터셋 준비
@@ -159,7 +180,7 @@ export HF_USER="Your_HuggingFace_Account"
     # 평가 및 실행 기본 설정
     lerobot-record \
       --robot.type=so101_follower \
-      --robot.port=/dev/ttyACM0 \
+      --robot.port=/dev/so101_follower \
       --robot.id=follower \
       --robot.cameras='{ 
           top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
@@ -179,7 +200,7 @@ export HF_USER="Your_HuggingFace_Account"
     # 평가 및 실행 시간 설정을 길게 해서 끊기지 않고 반복 작업 수행
     lerobot-record \
         --robot.type=so101_follower \
-        --robot.port=/dev/ttyACM1 \
+        --robot.port=/dev/so101_follower \
         --robot.id=follower \
         --robot.cameras='{ 
             top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
@@ -233,7 +254,7 @@ robot pc에서 어떤 모델을 사용하고 어떤 gpu를 사용할것인지 �
 ```bash
 python -m lerobot.async_inference.robot_client \
     --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM1 \
+    --robot.port=/dev/so101_follower \
     --robot.id=follower \
     --robot.cameras='{ 
         top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
@@ -266,7 +287,7 @@ __참고__: 서버와 클라이언트가 같은 PC라면 둘 다 같은 환경�
 
 ## 실제 성능
 
-### 검증된 작업들 (ALOHA 기준...)
+### 검증된 작업들 (ALOHA 기준)
 - **배터리 삽입**: 90% 성공률
 - **벨크로 부착**: 85% 성공률
 - **물체 집어 담기**: 95% 성공률

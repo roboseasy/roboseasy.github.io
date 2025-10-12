@@ -1,12 +1,12 @@
 ---
-title: 'So-Arm  Calibration'
-description: 'So-Arm  로봇 팔 Calibration 가이드'
+title: 'So-ARM  Calibration'
+description: 'So-ARM  로봇 팔 Calibration 가이드'
 ---
 
 import Callout from '../../../../../../components/Callout.astro';
 import Tabs from '../../../../../../components/Tabs.astro';
 
-# So-Arm  Calibration
+# So-ARM Calibration
 
 ## 개요
 
@@ -27,7 +27,7 @@ Calibration 이후 Calibration 파일은 `~/.cache/huggingface/lerobot/calibrati
 Calibration을 시작하기 전에 다음 사항들을 확인해주세요:
 
 - 리더 암과 팔로워 암이 모두 연결되어 있는지 확인
-- USB 포트 연결 상태 확인 (`/dev/ttyACM0`, `/dev/ttyACM1`)
+- USB 포트 연결 상태 확인 (`/dev/so101_leader`, `/dev/so101_follower`)
 - 로봇 팔이 자유롭게 움직일 수 있는 공간 확보
 
 
@@ -44,7 +44,7 @@ Calibration을 시작하기 전에 다음 사항들을 확인해주세요:
 
 <div class="youtube-grid">
   <div class="youtube-card">
-    <h3>칼리브레이션 영상</h3>
+    <h3>칼리브레이션 가이드 영상</h3>
     <div class="youtube-embed">
       <iframe 
         src="https://www.youtube.com/embed/vDS5eLKd9lM" 
@@ -57,7 +57,7 @@ Calibration을 시작하기 전에 다음 사항들을 확인해주세요:
   </div>
 </div>
 
-
+---
 
 ## 0. 가상환경 활성화 
 
@@ -77,7 +77,7 @@ source .venv/bin/activate
 ```bash
 lerobot-calibrate \
     --teleop.type=so101_leader \
-    --teleop.port=/dev/ttyACM0 \
+    --teleop.port=/dev/so101_leader \
     --teleop.id=leader
 ```
 
@@ -130,7 +130,7 @@ lerobot-calibrate \
 ```bash
 lerobot-calibrate \
     --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM1 \
+    --robot.port=/dev/so101_follower \
     --robot.id=follower
 ```
 
@@ -173,7 +173,7 @@ Calibration이 완료되면 다음 위치에 파일이 저장됩니다:
 
 ### 일반적인 문제
 
-- **포트 연결 오류**: USB 포트 번호(`/dev/ttyACM0`, `/dev/ttyACM1`) 확인
+- **포트 연결 오류**: USB 포트 번호(`/dev/so101_leader`, `/dev/so101_follower`) 확인
 - **권한 문제**: 사용자가 시리얼 포트 접근 권한을 가지고 있는지 확인
 - **하드웨어 연결**: 로봇 팔의 전원과 USB 연결 상태 점검
 

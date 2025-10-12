@@ -10,16 +10,16 @@ import Tabs from '../../../../../../components/Tabs.astro';
 
 <Callout type="info" title="리더-팔로워 텔레오퍼레이션이란?">
 리더-팔로워(Leader-Follower) 방식은 한 대의 로봇(리더)을 사람이 직접 조작하면, 다른 로봇(팔로워)이 그 동작을 실시간으로 따라하는 직관적 원격 제어 방식입니다.  
-SO-ARM 두 대와 Ubuntu 환경에서 USB 포트(`/dev/ttyACM0`, `/dev/ttyACM1`)로 쉽게 구현할 수 있습니다.
+SO-ARM 두 대와 Ubuntu 환경에서 USB 포트(`/dev/so101_leader`, `/dev/so101_follower`)로 쉽게 구현할 수 있습니다.
 </Callout>
 
 ---
 
-## 1. 목적 및 개요
+## 개요
 
 - **직관적 제어**: 리더 암을 손으로 움직이면 팔로워 암이 그대로 따라함
 - **고품질 데이터 수집**: Imitation Learning 등 학습용 데이터셋 구축에 최적
-- **Ubuntu 환경**: USB 포트(`/dev/ttyACM0`, `/dev/ttyACM1`) 기준 설명
+- **Ubuntu 환경**: USB 포트(`/dev/so101_leader`, `/dev/so101_follower`) 기준 설명
 
 ---
 
@@ -29,7 +29,7 @@ SO-ARM 두 대와 Ubuntu 환경에서 USB 포트(`/dev/ttyACM0`, `/dev/ttyACM1`)
 
 <div class="youtube-grid">
   <div class="youtube-card">
-    <h3>텔레오퍼레이션 영상</h3>
+    <h3>텔레오퍼레이션 가이드 영상</h3>
     <div class="youtube-embed">
       <iframe 
         src="https://www.youtube.com/embed/x55GjA5352U" 
@@ -44,23 +44,24 @@ SO-ARM 두 대와 Ubuntu 환경에서 USB 포트(`/dev/ttyACM0`, `/dev/ttyACM1`)
 
 ---
 
-## 2. 하드웨어 및 환경 준비
+## 하드웨어 및 환경 준비
 
 - **SO-ARM 로봇 2대** (리더/팔로워)
 - **Ubuntu PC** (USB 포트 2개 이상)
 - **USB 케이블 2개**
 - **(선택) 카메라**: 데이터 수집/모델 추론용
 
-### 포트 확인 및 권한 설정
+### 캘리브레이션
+
+리더/팔로워 모두 캘리브레이션을 반드시 진행해야 합니다.  
+자세한 방법은 [SO-ARM 캘리브레이션 가이드](/docs/physical-ai/lerobot/so-arm/software/calibration) 참고.
+
+---
+
+
+## 0. 가상환경 활성화
 
 ```bash
-ls /dev/ttyACM*
-sudo chmod 666 /dev/ttyACM0
-sudo chmod 666 /dev/ttyACM1
-```
-
-```bash
-# 가상환경 활성화 
 cd lerobot
 
 # 가상환경 활성화
@@ -69,14 +70,8 @@ source .venv/bin/activate
 
 ---
 
-## 3. 캘리브레이션
 
-리더/팔로워 모두 캘리브레이션을 반드시 진행해야 합니다.  
-자세한 방법은 [SO-ARM 캘리브레이션 가이드](/docs/physical-ai/lerobot/so-arm/software/calibration) 참고.
-
----
-
-## 4. 카메라 index 찾기
+## 1. 카메라 index 찾기
 
 ### 카메라 index, 스펙, fps 확인
 
@@ -117,7 +112,7 @@ Camera#1:
 ---
 
 
-## 5. 텔레오퍼레이션 실행 예시
+## 2. 텔레오퍼레이션 실행 예시
 
 SO-ARM 두 대를 Ubuntu에서 USB로 연결한 환경 기준 예시입니다.
 
@@ -128,10 +123,10 @@ SO-ARM 두 대를 Ubuntu에서 USB로 연결한 환경 기준 예시입니다.
     # 카메라 없이 기본 텔레옵
     lerobot-teleoperate \
       --robot.type=so101_follower \
-      --robot.port=/dev/ttyACM1 \
+      --robot.port=/dev/so101_follower \
       --robot.id=follower \
       --teleop.type=so101_leader \
-      --teleop.port=/dev/ttyACM0 \
+      --teleop.port=/dev/so101_leader \
       --teleop.id=leader \
       --display_data=false
     ```
@@ -141,15 +136,14 @@ SO-ARM 두 대를 Ubuntu에서 USB로 연결한 환경 기준 예시입니다.
     # 카메라 추가 설정
     lerobot-teleoperate \
       --teleop.type=so101_leader \
-      --teleop.port=/dev/ttyACM0 \
+      --teleop.port=/dev/so101_leader \
       --teleop.id=leader \
       --robot.type=so101_follower \
-      --robot.port=/dev/ttyACM1 \
+      --robot.port=/dev/so101_follower \
       --robot.id=follower \
       --robot.cameras='{ 
           top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
           wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
-          belly: {type: opencv, index_or_path: 6, width: 640, height: 480, fps: 25},
       }' \
       --display_data=true
     ```
@@ -160,10 +154,10 @@ SO-ARM 두 대를 Ubuntu에서 USB로 연결한 환경 기준 예시입니다.
 | 옵션명           | 설명                       | 예시 값         |
 |------------------|----------------------------|-----------------|
 | --robot.type     | 팔로워 로봇 타입           | so101_follower  |
-| --robot.port     | 팔로워 USB 포트            | /dev/ttyACM1    |
+| --robot.port     | 팔로워 USB 포트            | /dev/so101_follower    |
 | --robot.id       | 팔로워 이름                | follower        |
 | --teleop.type    | 리더 로봇 타입             | so101_leader    |
-| --teleop.port    | 리더 USB 포트              | /dev/ttyACM0    |
+| --teleop.port    | 리더 USB 포트              | /dev/so101_leader    |
 | --teleop.id      | 리더 이름                  | leader          |
 
 ---

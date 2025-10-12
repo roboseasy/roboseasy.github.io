@@ -1,6 +1,6 @@
 ---
-title: 'SO-101 Arm 조립하기'
-description: 'SO-101 오픈소스 로봇 팔 가이드'
+title: 'So-ARM 조립하기'
+description: 'So-ARM 오픈소스 로봇 팔 가이드'
 ---
 
 import Callout from '../../../../../../components/Callout.astro';
@@ -9,7 +9,7 @@ import Tabs from '../../../../../../components/Tabs.astro';
 # SO-101 조립 가이드
 
 <Callout type="info">
-이 문서는 HuggingFace LeRobot SO-101 공식 가이드를 기반으로, RoboSEasy 스타일로 재구성한 한국어 조립 안내서입니다.
+이 문서는 HuggingFace LeRobot So-Arm 101 공식 가이드를 기반으로, RoboSEasy 스타일로 재구성한 한국어 조립 안내서입니다.
 </Callout>
 
 ## 1. 개요
@@ -22,14 +22,22 @@ SO-101은 6축 오픈소스 로봇 팔로, 3D 프린팅 부품과 STS3215 서보
 
 - [SO-ARM100/101 README](https://github.com/TheRobotStudio/SO-ARM100)에서 부품 목록(BOM)과 3D 프린팅 파일을 확인하세요.
 - 로보시지는 로보시지만의 3D 프린팅을 제공합니다. 더욱 넓은 확장성과 불편한 부분을 개선하였습니다.
-- [3D 파츠만 구매하러가기](https://smartstore.naver.com/roboseasy/products/12361795642)
-
+- [3D 파츠 구매하기](https://smartstore.naver.com/roboseasy/products/12361795642)
+- [So-ARM 풀패키지 구매하기](https://smartstore.naver.com/roboseasy/products/12169101368?nl-query=lerobot%20%EA%B5%AC%EB%A7%A4&nl-au=0bf4503d107c402f90b0e21dfbf29ca9)
 
 ### 2.2 LeRobot 설치
 
 - [설치 가이드](../software/installation)를 참고하여 LeRobot을 설치하세요.
 - Feetech SDK도 추가로 설치해야 합니다.
 
+**가상환경 활성화**
+```bash
+cd lerobot
+
+# 가상환경 활성화
+source .venv/bin/activate
+```
+**Feetech SDK 설치**
 ```bash
 pip install -e ".[feetech]"
 ```
@@ -50,18 +58,8 @@ Leader 보드와 Follower 보드를 자신의 PC와 USB 케이블로 연결한 �
 ls /dev/ttyACM*
 ```
 
-
-```bash
-cd lerobot
-
-# 가상환경 활성화
-source .venv/bin/activate
-```
-
 ```bash
 lerobot-find-port
-# 또는 
-# python -m lerobot.find_port
 ```
 
 Leader 보드와 연결된 USB 케이블을 PC에서 뽑고 Enter를 누릅니다. 그러면 아래와 같은 결과를 확인할 수 있습니다.
@@ -77,8 +75,6 @@ Reconnect the USB cable
 
 ```bash
 lerobot-find-port
-# 또는 
-# python -m lerobot.find_port
 ```
 
 Follower 보드와 연결된 USB 케이블을 PC에서 뽑고 Enter를 누릅니다. 그러면 아래와 같은 결과를 확인할 수 있습니다.
@@ -315,8 +311,8 @@ lerobot-setup-motors \
 ## 다음 단계
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 2rem 0;">
-  <a href="/docs/physical-ai/lerobot/so-arm/software/calibration" style="padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); text-decoration: none; transition: all var(--transition-base);">
-    <h3 style="margin: 0 0 0.5rem 0; color: var(--color-accent);"><i class="fas fa-cog"></i> Calibration</h3>
-    <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">Teleoperation을 위한 로봇 자세 조정</p>
+  <a href="/docs\physical-ai\lerobot\so-arm\hardware\usbport" style="padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); text-decoration: none; transition: all var(--transition-base);">
+    <h3 style="margin: 0 0 0.5rem 0; color: var(--color-accent);"><i class="fas fa-cog"></i>USB 포트 번호 고정 가이드</h3>
+    <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">USB 꽂는 순서가 바뀔때마다 포트번호가 바뀌는 문제를 해결합니다.</p>
   </a>
 </div>

@@ -1,6 +1,6 @@
 ---
 title: 'SO-ARM101 Pick & Place 튜토리얼'
-description: 'SO-ARM101과 ACT로 물체 집어 담기 작업 학습하기'
+description: 'SO-ARM101과 ACT로 물체 집어 담기 작업 학습하기 튜토리얼'
 ---
 
 import Callout from '../../../../../../components/Callout.astro';
@@ -12,9 +12,9 @@ import Tabs from '../../../../../../components/Tabs.astro';
 
 <Callout type="info" title="필요 사항">
   - **하드웨어**: SO-ARM101 (리더+팔로워)
-  - **카메라**: USB 웹캠 1대
-  - **작업 물체**: 작은 블록 또는 장난감
-  - **목표 바구니**: 투명한 플라스틱 통
+  - **카메라**: USB 웹캠 2대 (top-view, wrist-view)
+  - **작업 물체**: 작은 블록 또는 펜
+  - **목표 바구니**: 플라스틱 통 또는 박스 또는 연필 통 등
 </Callout>
 
 ## 작업 목표
@@ -26,8 +26,8 @@ import Tabs from '../../../../../../components/Tabs.astro';
 ### 작업 공간 준비
 
 <Callout type="tip" title="설정 팁">
-  - **카메라 위치**: 작업 공간 전체가 보이도록 45도 각도로 설치
-  - **바구니 선택**: 투명한 플라스틱 통 사용 (물체 확인 용이)
+  - **카메라 위치**: 작업 공간 전체가 보이도록 Top-view 각도로 설치
+  - **바구니 선택**: 플라스틱 통, 박스 또는 연필 통 등 사용
   - **조명 설정**: 그림자가 적게 생기도록 균일한 조명
   - **작업 공간**: 로봇 팔 기준 반경 30cm 이내
 </Callout>
@@ -35,36 +35,48 @@ import Tabs from '../../../../../../components/Tabs.astro';
 ### SO-ARM101 연결 및 테스트
 ```bash
 # 1. 디바이스 확인
-python -m lerobot.scripts.find_devices
+lerobot-find-port
 
-# 2. 리더-팔로워 연결 테스트
-python -m lerobot.teleoperate \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyUSB0 \
-    --teleop.type=so101_leader \
-    --teleop.port=/dev/ttyUSB1
+# 2. 리더-팔로워 연결 및 카메라 테스트
+lerobot-teleoperate \
+  --teleop.type=so101_leader \
+  --teleop.port=/dev/so101_leader \
+  --teleop.id=leader \
+  --robot.type=so101_follower \
+  --robot.port=/dev/so101_follower \
+  --robot.id=follower \
+  --robot.cameras='{ 
+      top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+      wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+  }' \
+  --display_data=true
 ```
 
 ## 2. 데이터 수집
 
-### 작업 시연 녹화
+### 텔레옵 작업 녹화
 ```bash
 # Pick & Place 데이터셋 생성
 export TASK_NAME="pick_and_place_basket"
 export HF_USER="your_username"
 
-python -m lerobot.record \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyUSB0 \
+lerobot-record \
     --teleop.type=so101_leader \
-    --teleop.port=/dev/ttyUSB1 \
-    --robot.cameras="webcam" \
+    --teleop.port=/dev/ttyACM0 \
+    --teleop.id=leader \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1 \
+    --robot.id=follower \
+    --robot.cameras='{ 
+        top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+        wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+    }' \
+    --dataset.single_task=${TASK_NAME} \
     --dataset.repo_id=${HF_USER}/${TASK_NAME} \
-    --dataset.single_task="Pick object and place in basket" \
-    --dataset.num_episodes=100 \
-    --warmup_time_s=3 \
-    --episode_time_s=15 \
-    --reset_time_s=5
+    --dataset.num_episodes=45 \
+    --dataset.episode_time_s=15 \
+    --dataset.reset_time_s=3 \
+    --display_data=true
 ```
 
 ### 데이터 수집 프로토콜
@@ -73,24 +85,12 @@ python -m lerobot.record \
   1. **시작 위치**: 로봇 팔은 항상 홈 포지션에서 시작
   2. **물체 위치**: 5개의 다른 위치에서 각 20회씩 시연
   3. **속도**: 일정한 속도로 부드럽게 움직이기
-  4. **그립**: 물체를 확실하게 잡았는지 확인 후 이동
+  4. **그립**: 
+      - 물체를 확실하게 잡았는지 확인 후 이동
+      - 물체를 잡고 이동하는 일련의 과정 일관성
 </Callout>
 
-### 위치별 데이터 수집
-```bash
-# 5개 위치에서 각각 20 에피소드씩
-for i in {1..5}; do
-    echo "=== Position $i: 20 episodes ==="
-    echo "물체를 Position $i에 놓고 Enter를 누르세요..."
-    read
-    
-    python -m lerobot.record \
-        --dataset.repo_id=${HF_USER}/${TASK_NAME} \
-        --dataset.num_episodes=20 \
-        --dataset.tags="position_$i" \
-        --resume
-done
-```
+---
 
 ## 3. 데이터 검증
 
