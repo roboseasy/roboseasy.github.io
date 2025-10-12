@@ -157,41 +157,40 @@ export HF_USER="Your_HuggingFace_Account"
     ```bash
     # 평가 및 실행 기본 설정
     lerobot-record \
-        --robot.type=so101_follower \
-        --robot.port=/dev/ttyACM1 \
-        --robot.id=follower \
-        --robot.cameras='{ 
-            top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
-            wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
-        }' \
-        --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
-        --dataset.single_task=eval_${TASK_NAME} \
-        --dataset.num_episodes=50 \
-        --dataset.episode_time_s=15 \
-        --dataset.reset_time_s=1 \
-        --policy.path=${HF_USER}/${TASK_NAME} \
-        --policy.instruction="Pick up the red pen and place it in the pencil case" \
-        --display_data=true
+      --robot.type=so101_follower \
+      --robot.port=/dev/ttyACM1 \
+      --robot.id=follower \
+      --robot.cameras='{ 
+          top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+          wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+      }' \
+      --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
+      --dataset.single_task="Pick up the red pen and place it in the pencil case" \
+      --dataset.num_episodes=10 \
+      --dataset.episode_time_s=15 \
+      --dataset.reset_time_s=1 \
+      --policy.path=${HF_USER}/smolvla_${TASK_NAME} \
+      --display_data=true
     ```
   </div>
   <div class="tab-panel">
     ```bash
     # 평가 및 실행 시간 설정을 길게 해서 끊기지 않고 반복 작업 수행
     lerobot-record \
-        --robot.type=so101_follower \
-        --robot.port=/dev/ttyACM1 \
-        --robot.id=follower \
-        --robot.cameras='{ 
-            top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
-            wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
-        }' \
-        --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
-        --dataset.single_task=eval_${TASK_NAME} \
-        --policy.path=${HF_USER}/${TASK_NAME} \
-        --dataset.episode_time_s=100_000 \
-        --dataset.reset_time_s=1 \
-        --policy.instruction="Pick up the red pen and place it in the pencil case" \
-        --display_data=true
+      --robot.type=so101_follower \
+      --robot.port=/dev/ttyACM1 \
+      --robot.id=follower \
+      --robot.cameras='{ 
+          top: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
+          wrist: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
+      }' \
+      --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
+      --dataset.single_task="Pick up the red pen and place it in the pencil case" \
+      --dataset.num_episodes=1 \
+      --dataset.episode_time_s=10000 \
+      --dataset.reset_time_s=1 \
+      --policy.path=${HF_USER}/smolvla_${TASK_NAME} \
+      --display_data=true
     ```
   </div>
 </Tabs>
