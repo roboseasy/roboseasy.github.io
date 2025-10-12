@@ -1,0 +1,318 @@
+---
+title: 'Dual So-ARM 조립하기'
+description: 'Dual So-ARM 오픈소스 로봇 팔 가이드'
+---
+
+import Callout from '../../../../../../components/Callout.astro';
+import Tabs from '../../../../../../components/Tabs.astro';
+
+# SO-101 조립 가이드
+
+<Callout type="info">
+이 문서는 HuggingFace LeRobot So-Arm 101 공식 가이드를 기반으로, RoboSEasy 스타일로 재구성한 한국어 조립 안내서입니다.
+</Callout>
+
+## 1. 개요
+
+SO-101은 6축 오픈소스 로봇 팔로, 3D 프린팅 부품과 STS3215 서보 모터를 사용하여 직접 조립할 수 있습니다.
+
+## 2. 준비 단계
+
+### 2.1 부품 소싱 및 3D 프린팅
+
+- [SO-ARM100/101 README](https://github.com/TheRobotStudio/SO-ARM100)에서 부품 목록(BOM)과 3D 프린팅 파일을 확인하세요.
+- 로보시지는 로보시지만의 3D 프린팅을 제공합니다. 더욱 넓은 확장성과 불편한 부분을 개선하였습니다.
+- [3D 파츠 구매하기](https://smartstore.naver.com/roboseasy/products/12361795642)
+- [So-ARM 풀패키지 구매하기](https://smartstore.naver.com/roboseasy/products/12169101368?nl-query=lerobot%20%EA%B5%AC%EB%A7%A4&nl-au=0bf4503d107c402f90b0e21dfbf29ca9)
+
+### 2.2 LeRobot 설치
+
+- [설치 가이드](../software/installation)를 참고하여 LeRobot을 설치하세요.
+- Feetech SDK도 추가로 설치해야 합니다.
+
+**가상환경 활성화**
+```bash
+cd lerobot
+
+# 가상환경 활성화
+source .venv/bin/activate
+```
+**Feetech SDK 설치**
+```bash
+pip install -e ".[feetech]"
+```
+
+---
+
+## 3. 모터 설정
+
+<Callout type="tip">
+💡`TIP` : 반드시 조립 전, 모터 설정을 먼저해주세요. 조립 후 모터 설정을 하게 되면 모터 케이블을 다시 빼고 하나씩 모터 설정을 해야합니다.
+</Callout>
+
+### 3.1 USB 포트 찾기
+
+Leader 보드와 Follower 보드를 자신의 PC와 USB 케이블로 연결한 후, 아래 명령어로 포트를 확인하세요.
+
+```bash
+ls /dev/ttyACM*
+```
+
+```bash
+lerobot-find-port
+```
+
+Leader 보드와 연결된 USB 케이블을 PC에서 뽑고 Enter를 누릅니다. 그러면 아래와 같은 결과를 확인할 수 있습니다.
+
+```bash
+The port of this MotorsBus is '/dev/ttyACM0'
+Reconnect the USB cable
+```
+
+해당 보드의 포트는 '/dev/ttyACM0'입니다.
+
+이제 Follower 보드와 PC와 연결된 USB 케이블만 남겨두고 같은 명령어를 실행합니다.
+
+```bash
+lerobot-find-port
+```
+
+Follower 보드와 연결된 USB 케이블을 PC에서 뽑고 Enter를 누릅니다. 그러면 아래와 같은 결과를 확인할 수 있습니다.
+
+```bash
+The port of this MotorsBus is '/dev/ttyACM1'
+Reconnect the USB cable
+```
+
+해당 보드의 포트는 '/dev/ttyACM1'입니다.
+
+각 포트가 어떤 팔(Leader/Follower)에 해당하는지 구분하세요.
+
+<Callout type="tip">
+💡`TIP` : Ubuntu에서는 기본적으로 포트 사용 권한이 제한되어 있습니다. 따라서 **사용자를 `dialout` 그룹에 추가** 해 두면, 매번 포트 권한을 직접 설정하지 않아도 되어 훨씬 편리하게 사용할 수 있습니다.
+</Callout>
+
+dialout 그룹 권한 부여
+
+```bash
+sudo chmod 666 /dev/ttyACM0
+sudo chmod 666 /dev/ttyACM1
+```
+
+```bash
+sudo usermod -a -G dialout $USER
+```
+
+
+### 3.2 모터 ID 및 Baudrate 설정
+
+각 모터는 고유 ID가 필요하며, 통신을 위해 동일한 Baudrate로 설정해야 합니다.
+
+아래 명령어를 실행하고 터미널에서 보이는 가이드에 따라서 모터와 순서를 따르세요. 
+
+<Callout type="tip">
+💡`TIP` : 미리 모터를 순서대로 배열하고 아래 명령어를 실행합니다. 아래 첨부한 이미지를 참고하여 순서를 잘지켜 진행하세요.
+</Callout>
+
+<table>
+  <tr>
+    <th>Leader Arm Joint 6 </th>
+    <th>Leader Arm Joint 5 </th>
+    <th>Leader Arm Joint 4 </th>
+  </tr>
+  <tr>
+    <td><img src="/images/lerobot/assembly/cal_L6.jpg" alt="Leader Arm Joint 6 Calibration" width="120" /></td>
+    <td><img src="/images/lerobot/assembly/cal_L5.jpg" alt="Leader Arm Joint 5 Calibration" width="120" /></td>
+    <td><img src="/images/lerobot/assembly/cal_L4.jpg" alt="Leader Arm Joint 4 Calibration" width="120" /></td>
+  </tr>
+  <tr>
+    <th>Leader Arm Joint 3 </th>
+    <th>Leader Arm Joint 2 </th>
+    <th>Leader Arm Joint 1 </th>
+  </tr>
+  <tr>
+    <td><img src="/images/lerobot/assembly/cal_L3.jpg" alt="Leader Arm Joint 3 Calibration" width="120" /></td>
+    <td><img src="/images/lerobot/assembly/cal_L2.jpg" alt="Leader Arm Joint 2 Calibration" width="120" /></td>
+    <td><img src="/images/lerobot/assembly/cal_L1.jpg" alt="Leader Arm Joint 1 Calibration" width="120" /></td>
+  </tr>
+</table>
+
+---
+
+<table>
+  <tr>
+    <th>Follower Arm Joint 6 </th>
+    <th>Follower Arm Joint 5 </th>
+    <th>Follower Arm Joint 4 </th>
+  </tr>
+  <tr>
+    <td><img src="/images/lerobot/assembly/cal_F6.jpg" alt="Follower Arm Joint 6 Calibration" width="120" /></td>
+    <td><img src="/images/lerobot/assembly/cal_F5.jpg" alt="Follower Arm Joint 5 Calibration" width="120" /></td>
+    <td><img src="/images/lerobot/assembly/cal_F4.jpg" alt="Follower Arm Joint 4 Calibration" width="120" /></td>
+  </tr>
+  <tr>
+    <th>Follower Arm Joint 3 </th>
+    <th>Follower Arm Joint 2 </th>
+    <th>Follower Arm Joint 1 </th>
+  </tr>
+  <tr>
+    <td><img src="/images/lerobot/assembly/cal_F3.jpg" alt="Follower Arm Joint 3 Calibration" width="120" /></td>
+    <td><img src="/images/lerobot/assembly/cal_F2.jpg" alt="Follower Arm Joint 2 Calibration" width="120" /></td>
+    <td><img src="/images/lerobot/assembly/cal_F1.jpg" alt="Follower Arm Joint 1 Calibration" width="120" /></td>
+  </tr>
+</table>
+
+
+#### Leader 예시
+
+```bash
+lerobot-setup-motors \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/ttyACM0
+```
+
+#### Follower 예시
+
+```bash
+lerobot-setup-motors \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM1
+```
+
+
+<Callout type="tip">
+💡`TIP` : 각 모터를 하나씩 연결하여 ID와 Baudrate를 설정하세요. 케이블 연결 상태를 반드시 확인하세요.
+</Callout>
+
+---
+
+
+## 4. 단계별 조립 가이드
+
+아래는 각 관절(Joint)별 조립 방법과 참고 동영상입니다.
+
+<Tabs tabs={["Joint 1 (베이스)", "Joint 2 (숄더)", "Joint 3 (엘보)", "Joint 4 (손목 굽힘)", "Joint 5 (손목 회전)", "Gripper (그리퍼)"]}>
+<div label="Joint 1 (베이스)" class="tab-panel">
+1. 첫 번째 모터를 베이스에 넣고, M2x6mm 나사 4개(위 2개, 아래 2개)로 고정합니다.<br/>
+2. 모터 홀더를 끼우고, M2x6mm 나사 2개(양쪽 각 1개)로 고정합니다.<br/>
+3. 모터 혼 2개를 설치하고, 상단 혼은 M3x6mm 나사로 고정합니다.<br/>
+4. 숄더 부품을 부착하고, M3x6mm 나사 4개(위 4개, 아래 4개)로 고정합니다.<br/>
+5. 숄더 모터 홀더를 추가합니다.<br/>
+<div class="video-container">
+  <video controls width="100%" preload="metadata" muted>
+<source src="/images/lerobot/Joint1_v2.mp4" type="video/mp4" />
+    동영상을 지원하지 않는 브라우저입니다.
+  </video>
+</div>
+</div>
+<div label="Joint 2 (숄더)" class="tab-panel">
+1. 두 번째 모터를 위에서 삽입합니다.<br/>
+2. M2x6mm 나사 4개로 고정합니다.<br/>
+3. 모터 혼 2개를 설치하고, M3x6mm 혼 나사로 고정합니다.<br/>
+4. 상완 부품을 M3x6mm 나사 4개씩 양쪽에 고정합니다.<br/>
+<div class="video-container">
+  <video controls width="100%" preload="metadata" muted>
+<source src="/images/lerobot/Joint2_v2.mp4" type="video/mp4" />
+    동영상을 지원하지 않는 브라우저입니다.
+  </video>
+</div>
+</div>
+<div label="Joint 3 (엘보)" class="tab-panel">
+1. 세 번째 모터를 삽입하고, M2x6mm 나사 4개로 고정합니다.<br/>
+2. 모터 혼 2개를 설치하고, M3x6mm 혼 나사로 고정합니다.<br/>
+3. 전완 부품을 M3x6mm 나사 4개씩 양쪽에 고정합니다.<br/>
+<div class="video-container">
+  <video controls width="100%" preload="metadata" muted>
+<source src="/images/lerobot/Joint3_v2.mp4" type="video/mp4" />
+    동영상을 지원하지 않는 브라우저입니다.
+  </video>
+</div>
+</div>
+<div label="Joint 4 (손목 굽힘)" class="tab-panel">
+1. 모터 홀더 4번을 끼웁니다.<br/>
+2. 네 번째 모터를 삽입합니다.<br/>
+3. M2x6mm 나사 4개로 고정하고, 모터 혼을 설치한 뒤 M3x6mm 혼 나사로 고정합니다.<br/>
+<div class="video-container">
+  <video controls width="100%" preload="metadata" muted>
+<source src="/images/lerobot/Joint4_v2.mp4" type="video/mp4" />
+    동영상을 지원하지 않는 브라우저입니다.
+  </video>
+</div>
+</div>
+<div label="Joint 5 (손목 회전)" class="tab-panel">
+1. 다섯 번째 모터를 손목 홀더에 넣고, M2x6mm 전면 나사 2개로 고정합니다.<br/>
+2. 모터 혼 1개를 설치하고, M3x6mm 혼 나사로 고정합니다.<br/>
+3. 손목 부품을 M3x6mm 나사 4개씩 양쪽에 고정합니다.<br/>
+<div class="video-container">
+  <video controls width="100%" preload="metadata" muted>
+<source src="/images/lerobot/Joint5_v2.mp4" type="video/mp4" />
+    동영상을 지원하지 않는 브라우저입니다.
+  </video>
+</div>
+</div>
+<div label="Gripper (그리퍼)" class="tab-panel">
+1. 그리퍼를 5번 모터에 부착하고, 손목의 모터 혼에 M3x6mm 나사 4개로 고정합니다.<br/>
+2. 그리퍼 모터를 삽입하고, M2x6mm 나사 2개씩 양쪽에 고정합니다.<br/>
+3. 모터 혼을 설치하고, M3x6mm 혼 나사로 고정합니다.<br/>
+4. 그리퍼 클로를 M3x6mm 나사 4개씩 양쪽에 고정합니다.<br/>
+<div class="video-container">
+  <video controls width="100%" preload="metadata" muted>
+<source src="/images/lerobot/Gripper_v2.mp4" type="video/mp4" />
+    동영상을 지원하지 않는 브라우저입니다.
+  </video>
+</div>
+</div>
+</Tabs>
+
+---
+
+## 5. 조립 영상
+
+조립 영상을 같이 보면서 진행해 보세요!
+
+<div class="youtube-grid">
+  <div class="youtube-card">
+    <h3>팔로워암 조립 영상</h3>
+    <div class="youtube-embed">
+      <iframe 
+        src="https://www.youtube.com/embed/I2O7ipTH5VI" 
+        title="So-Arm Max 팔로워암 조립 영상"
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+  <div class="youtube-card">
+    <h3>리더암 조립 영상</h3>
+    <div class="youtube-embed">
+      <iframe 
+        src="https://www.youtube.com/embed/WuzyrXT91Qg" 
+        title="So-Arm Max 리더암 조립 영상"
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+</div>
+
+---
+
+## 6. 참고 및 문제해결
+
+- [공식 GitHub 문서](https://github.com/huggingface/lerobot/blob/main/docs/source/so101.mdx)
+- [RoboSEasy Discord](https://discord.com/invite/s3KuuzsPFb)
+
+<Callout type="warning">
+조립 및 설정 중 문제가 발생하면, 전원/케이블 연결 상태를 반드시 점검하세요. Waveshare 보드를 사용할 경우 점퍼가 B 채널(USB)에 위치해야 합니다.
+</Callout>
+
+## 다음 단계
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 2rem 0;">
+  <a href="/docs\physical-ai\lerobot\so-arm\hardware\usbport" style="padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); text-decoration: none; transition: all var(--transition-base);">
+    <h3 style="margin: 0 0 0.5rem 0; color: var(--color-accent);"><i class="fas fa-cog"></i>USB 포트 번호 고정 가이드</h3>
+    <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">USB 꽂는 순서가 바뀔때마다 포트번호가 바뀌는 문제를 해결합니다.</p>
+  </a>
+</div>

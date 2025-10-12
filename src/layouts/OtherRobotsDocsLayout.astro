@@ -6,7 +6,7 @@ export interface Props {
   description?: string;
 }
 
-const { title, description = 'RoboSEasy Lerobot - 모두를 위한 Physical AI' } = Astro.props;
+const { title, description = 'RoboSEasy - Other Robots 문서' } = Astro.props;
 const currentPath = Astro.url.pathname;
 
 // 트레일링 슬래시 처리를 위한 헬퍼 함수
@@ -18,12 +18,8 @@ const isActivePath = (href: string, current: string) => {
 };
 
 // 현재 경로에 따른 네비게이션 섹션 결정
-const isLeRobotPage = currentPath.includes('/docs/physical-ai/lerobot/get-start/intro') || 
-                      currentPath.includes('/docs/physical-ai/lerobot/get-start/getting-started') || 
-                      currentPath.includes('/docs/physical-ai/lerobot/get-start/hardware') || 
-                      currentPath.includes('/docs/physical-ai/lerobot/get-start/software');
-
-const isSOArmPage = currentPath.includes('/docs/physical-ai/lerobot/so-arm');
+const isDualSOArmPage = currentPath.includes('/docs/physical-ai/others/dual-so-arm');
+const isDualSOArmMobilePage = currentPath.includes('/docs/physical-ai/others/dual-so-arm-mobile');
 
 // 네비게이션 구조
 type NavItem = {
@@ -33,46 +29,65 @@ type NavItem = {
   external?: boolean;
 };
 
+// Other Robots 네비게이션 사이드바
 const navigation: NavItem[] = [
   {
-    title: 'LeRobot 시작하기',
+    title: 'Dual SO ARM 시작하기',
     items: [
-      { title: '소개', href: '/docs/physical-ai/lerobot/get-start/intro' },
-      { title: '시작하기', href: '/docs/physical-ai/lerobot/get-start/getting-started' },
-      { title: '하드웨어 선택 가이드', href: '/docs/physical-ai/lerobot/get-start/hardware' },
-      { title: '소프트웨어 설치 가이드', href: '/docs/physical-ai/lerobot/get-start/software' },
-    ]
-  },
-  {
-    title: 'SO ARM 시작하기',
-    items: [
-      { title: '개요', href: '/docs/physical-ai/lerobot/so-arm' },
+      { title: '개요', href: '/docs/physical-ai/others/dual-so-arm' },
       {
         title: '하드웨어',
         items: [
-          { title: '조립', href: '/docs/physical-ai/lerobot/so-arm/hardware/assembly' },
-          { title: 'USB 포트 설정', href: '/docs/physical-ai/lerobot/so-arm/hardware/usbport' },
+          { title: '조립', href: '/docs/physical-ai/others/dual-so-arm/hardware/assembly' },
+          { title: 'USB 포트 설정', href: '/docs/physical-ai/others/dual-so-arm/hardware/usbport' },
         ]
       },
       {
         title: '기본 조작',
         items: [
-          { title: 'Calibration', href: '/docs/physical-ai/lerobot/so-arm/software/calibration' },
-          { title: 'Teleoperation', href: '/docs/physical-ai/lerobot/so-arm/software/teleoperation' },
-          { title: 'Record & Replay', href: '/docs/physical-ai/lerobot/so-arm/software/record-replay' },
+          { title: 'Calibration', href: '/docs/physical-ai/others/dual-so-arm/software/calibration' },
+          { title: 'Teleoperation', href: '/docs/physical-ai/others/dual-so-arm/software/teleoperation' },
+          { title: 'Record & Replay', href: '/docs/physical-ai/others/dual-so-arm/software/record-replay' },
         ]
       },
       {
         title: 'Policy',
         items: [
-          { title: 'ACT', href: '/docs/physical-ai/lerobot/so-arm/policy/act' },
-          { title: 'SmolVLA', href: '/docs/physical-ai/lerobot/so-arm/policy/smolvla' },
+          { title: 'ACT', href: '/docs/physical-ai/others/dual-so-arm/policy/act' },
+          { title: 'SmolVLA', href: '/docs/physical-ai/others/dual-so-arm/policy/smolvla' },
         ]
       },
-     
     ]
   },
-  
+
+  {
+    title: 'Dual SO ARM Mobile',
+     items: [
+      { title: '개요', href: '/docs/physical-ai/others/dual-so-arm-mobile' },
+      {
+        title: '하드웨어',
+        items: [
+          { title: '조립', href: '/docs/physical-ai/others/dual-so-arm-mobile/hardware/assembly' },
+          { title: 'USB 포트 설정', href: '/docs/physical-ai/others/dual-so-arm-mobile/hardware/usbport' },
+        ]
+      },
+      {
+        title: '기본 조작',
+        items: [
+          { title: 'Calibration', href: '/docs/physical-ai/others/dual-so-arm-mobile/software/calibration' },
+          { title: 'Teleoperation', href: '/docs/physical-ai/others/dual-so-arm-mobile/software/teleoperation' },
+          { title: 'Record & Replay', href: '/docs/physical-ai/others/dual-so-arm-mobile/software/record-replay' },
+        ]
+      },
+      {
+        title: 'Policy',
+        items: [
+          { title: 'ACT', href: '/docs/physical-ai/others/dual-so-arm-mobile/policy/act' },
+          { title: 'SmolVLA', href: '/docs/physical-ai/others/dual-so-arm-mobile/policy/smolvla' },
+        ]
+      },
+    ]
+  },
 ];
 ---
 
@@ -110,7 +125,6 @@ const navigation: NavItem[] = [
             <li><a href="/shop">쇼핑</a></li>
             <li><a href="#" onclick="alert('Coming Soon!'); return false;">게시판</a></li>
             <li><a href="/events">행사</a></li>
-            <!-- <li><a href="/lerobot/people">구성원</a></li>  -->
             <li><a href="https://roboseasy.com" target="_blank">Blog</a></li>
           </ul>
         </div>
@@ -121,13 +135,13 @@ const navigation: NavItem[] = [
         <aside class="docs-sidebar">
           <nav class="sidebar-nav">
             {navigation.filter((section) => {
-              // LeRobot 페이지에서는 LeRobot 섹션만 표시
-              if (isLeRobotPage) {
-                return section.title === 'LeRobot 시작하기';
+              // Dual SO ARM 페이지에서는 Dual SO ARM 섹션만 표시
+              if (isDualSOArmPage) {
+                return section.title === 'Dual SO ARM 시작하기';
               }
-              // SO ARM 페이지에서는 SO ARM 섹션만 표시
-              if (isSOArmPage) {
-                return section.title === 'SO ARM 시작하기';
+              // Dual SO ARM Mobile 페이지에서는 Dual SO ARM Mobile 섹션만 표시
+              if (isDualSOArmMobilePage) {
+                return section.title === 'Dual SO ARM Mobile';
               }
               // 기본적으로 모든 섹션 표시
               return true;
