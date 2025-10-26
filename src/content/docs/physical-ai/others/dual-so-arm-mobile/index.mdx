@@ -1,0 +1,215 @@
+---
+title: 'XLeRobot: Dual SO ARM 양팔 로봇'
+description: 'XLeRobot - SO ARM 기반 듀얼암 모바일 가정용 로봇'
+---
+
+import Callout from '../../../../../components/Callout.astro';
+import Tabs from '../../../../../components/Tabs.astro';
+
+<Callout type="info" title="XLeRobot: 양팔 모바일 로봇">
+  SO-ARM 기반의 저가형 듀얼암 모바일 로봇으로 가정용 작업을 수행할 수 있습니다.
+</Callout>
+
+# XLeRobot: Dual SO ARM
+
+<div style="margin: 2rem 0;">
+  <img 
+    src="/images/products/xlerobot_dual-arm-mobile-household-robot.jpeg" 
+    alt="XLeRobot Dual Arm Mobile Robot"
+    style="width: 100%; max-width: 800px; margin: 0 auto; display: block; border-radius: var(--radius-lg); border: 2px solid var(--color-border);"
+  />
+</div>
+
+**XLeRobot**은 **XL + LeRobot**의 합성어로, SO-ARM을 기반으로 한 듀얼암 모바일 가정용 로봇입니다.
+
+<Callout type="tip" title="🚀 Embodied AI를 모든 가정에!">
+  iPhone보다 저렴한 가격으로 가정용 로봇을 경험할 수 있습니다. 조립 시간은 4시간 미만!
+</Callout>
+
+## 🎯 XLeRobot이란?
+
+XLeRobot은 [LeRobot](https://github.com/huggingface/lerobot), [SO-100/SO-101](https://github.com/TheRobotStudio/SO-ARM100), [LeKiwi](https://github.com/SIGRobotics-UIUC/LeKiwi), [Bambot](https://github.com/timqian/bambot)의 거인들 위에 구축된 프로젝트입니다.
+
+### "LeRobot" 코어의 장점
+
+- **저렴한 재료** 💴: 90% 3D 프린팅 부품과 저렴한 모터 및 전자부품
+- **쉬운 조립** 🔨: 2개의 SO-101 암 조립 및 모터 설정에 67분
+- **플러그 앤 플레이** 🧩: 간단한 pip install과 몇 줄의 코드로 로봇 실행
+- **활발한 커뮤니티** 🌍: 세계 최대 저가형 로봇공학 커뮤니티
+  - 여러 SOTA VLA 모델, 데이터셋, 도구 제공
+  - 10,000+ 멤버의 브레인스토밍 및 토론
+
+### "XL" 향상의 이유
+
+- 🏠 저렴하고 안정적이며 조립이 쉬운 듀얼암 가정용 로봇의 부재
+- 🖨️ 전통적인 3D 프린팅 샤시의 내구성, 안정성, 적재 용량 제한
+- ⚡ DIY 모바일 로봇의 전원 공급 문제
+
+## 주요 특징
+
+### 🤖 하드웨어
+
+- **듀얼암 시스템**: 2개의 SO-101 로봇 팔 (각 6축)
+- **모바일 플랫폼**: 전방향 이동이 가능한 홀로노믹 드라이브
+- **IKEA 카트 베이스**: 안정적이고 튼튼한 구조
+- **멀티 카메라**: RGB 카메라 또는 RealSense RGBD 지원
+- **컴팩트 디자인**: 가정용으로 최적화된 크기
+
+### 🧠 소프트웨어
+
+- **LeRobot 완벽 지원**: 모든 LeRobot 기능 활용 가능
+- **다양한 제어 방식**: 키보드, Xbox 컨트롤러, Switch 조이콘, VR(Quest3)
+- **실시간 제어**: 블루투스 연결, WiFi 불필요, 0 지연시간
+- **시뮬레이션 지원**: ManiSkill 시뮬레이션 환경 제공
+- **다양한 센서**: 깊이, 세그멘테이션, 촉각 센서 지원
+
+## 💰 비용 분석
+
+<Tabs tabs={['가격 (직접 구매)', '조립 키트']}>
+  <div class="tab-panel">
+    ### 기본 구성
+    
+    | 지역 | 가격 |
+    |------|------|
+    | 미국 | **$660** |
+    | 유럽 | **€680** |
+    | 중국 | **¥3,999** |
+    | 한국 | **약 88만원** |
+    
+    **포함 내용:**
+    - 듀얼 SO-101 암 (리더 + 팔로워 각 1개)
+    - 모바일 베이스 (LeKiwi 기반)
+    - 단일 RGB 헤드 카메라
+    - 노트북 사용 (별도 구매)
+    
+    ### 업그레이드 옵션
+    
+    - **스테레오 듀얼 아이 RGB 카메라**: +$30
+    - **Raspberry Pi**: +$79
+    - **RealSense RGBD 카메라**: +$220
+  </div>
+  <div class="tab-panel">
+    ### 개발자 조립 키트
+    
+    Wowrobo와 협력하여 조립 키트를 판매하고 있습니다.
+    
+    - **중국 (Taobao)**: ¥3,699
+    - **전세계 배송**: $579
+    
+    **포함 내용:**
+    - 모든 기계 부품 및 전자부품
+    - 3D 프린팅 파츠
+    - 조립 가이드
+    
+    **미포함 (별도 구매):**
+    - 배터리
+    - IKEA 카트
+    
+    <Callout type="warning" title="구매 전 확인">
+      이 키트는 개발자용입니다. 구매 전 문서와 GitHub 저장소를 확인하여 사용 가능한 코드와 튜토리얼을 확인하세요.
+    </Callout>
+  </div>
+</Tabs>
+
+## 🌟 전체 장점
+
+### 비용 효율성
+- 완전한 빌드 비용 $660
+- SO-101 Arm과 LeKiwi에서 $250로 업그레이드 가능
+
+### 쉬운 업그레이드
+- **LeKiwi**와 **SO-100/SO-101**에서 간편한 업그레이드
+- 모터 ID 변경이나 수정 불필요
+- 동일한 테이블탑 단일/듀얼암 설정
+- SO-101 암의 정책을 직접 전송 가능
+
+### 실용성 및 신뢰성
+- $30,000 클로즈드 소스 로봇과 비교 가능한 많은 일상 작업 수행
+- [HuggingFace LeRobot 월드와이드 해커톤](https://huggingface.co/spaces/LeRobot-worldwide-hackathon/all-winners)에서 더 많은 작업 시연
+
+### 풍부한 오픈소스 리소스
+- LeRobot의 플러그 앤 플레이 코드
+- 방대한 AI 모델 라이브러리
+- 활발하고 성장하는 기여자 커뮤니티
+
+### ⚠️ 안전성 ⚠️
+- 저토크 모터, 짧은 암 길이, 휠 기반 설계로 인해 물리적으로 인간에게 해를 끼칠 가능성이 거의 없음
+- 여전히 많은 가정용 작업 수행 능력 유지
+
+## 🎯 누구를 위한 것인가?
+
+- 🚀 **스타트업 & 연구소**: 세계에서 가장 저렴한 범용 로봇 플랫폼 중 하나로 프로토타입 빠르게 제작
+- 👩🔬 **개인 연구자**: 예산을 절약하면서 Embodied AI 실험
+- 🎓 **교육자**:
+  - 고등학교 교사: 최첨단 로봇공학을 STEM 수업에 도입
+  - 대학 교수: 로봇공학/AI 과정을 위한 저렴한 플랫폼
+  - 학생: 초보자부터 연구자까지
+- 🤖 **DIY 애호가**: 실내 프로젝트에 완벽 - 식물 관리, 배달 봇, 홈 오토메이션
+
+## 제한사항
+
+(이 가격에 무엇을 더 바랄 수 있을까요?)
+
+- 🔒 **고정 높이**: 안정적인 리프팅 플랫폼을 추가하면 비용과 조립 난이도가 크게 증가
+- 📏 **작은 작업 공간**: Aloha에 비해 작음 - SO-101 작업 공간을 최대화하려 하지만 암 크기 제한 (~40cm 도달 거리)
+- ⚖️ **제한된 페이로드**: 단일 암당 600~1000g
+- 🤹 **손재주 제한**: 현재 인핸드 손재주를 위해 설계되지 않음
+- 🏋️ **무거운 작업 제한**: 암당 1kg 이상
+- 🏃 **동적 동작 제한**: 공 잡기 등
+
+그러나 모든 것을 고려했을 때 — 비용, 커뮤니티 지원, 조립 용이성, 실용성 — XLeRobot은 실내 응용을 위한 가장 매력적인 저가형 로봇 중 하나입니다!
+
+## 📚 리소스
+
+### XLeRobot 공식 자료
+- [GitHub 저장소](https://github.com/Vector-Wangel/XLeRobot)
+- [공식 문서](https://xlerobot.readthedocs.io)
+- [하드웨어 조립 비디오 튜토리얼 (YouTube)](https://www.youtube.com/watch?v=upB1CEFeOlk)
+- [하드웨어 조립 비디오 튜토리얼 (Bilibili)](https://www.bilibili.com/video/BV1AGWFzUEJf/)
+- [Discord 커뮤니티](https://discord.gg/bjZveEUh6F)
+
+### 구매 링크
+- [중국 (Taobao)](https://e.tb.cn/h.SZFbBgZABZ8zRPe?tk=ba514rTBRjQ) - ¥3,699
+- [전세계 (Wowrobo)](https://shop.wowrobo.com/products/xlerobot-dual-arm-mobile-household-robot-kit?variant=47297659961561) - $579
+
+## 시작하기 전에
+
+XLeRobot을 시작하기 전에 다음 사항들을 확인해주세요:
+
+1. **하드웨어 준비**: XLeRobot 키트 또는 SO-101 암 + LeKiwi + IKEA 카트
+2. **소프트웨어 환경**: Python 3.8+ 및 필수 라이브러리
+3. **기본 지식**: 로봇공학 및 머신러닝 기초
+4. **조립 시간**: 약 4시간
+
+## 다음 단계
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 2rem 0;">
+  <a href="/docs/physical-ai/others/dual-so-arm/hardware/assembly" style="padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); text-decoration: none; transition: all var(--transition-base);">
+    <h3 style="margin: 0 0 0.5rem 0; color: var(--color-accent);"><i class="fas fa-cog"></i> XLeRobot 조립</h3>
+    <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">XLeRobot 하드웨어 설정 및 조립 가이드</p>
+  </a>
+  
+  <a href="https://xlerobot.readthedocs.io/en/latest/software/index.html" style="padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); text-decoration: none; transition: all var(--transition-base);" target="_blank">
+    <h3 style="margin: 0 0 0.5rem 0; color: var(--color-accent);"><i class="fas fa-code"></i> 소프트웨어 설정</h3>
+    <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);">XLeRobot 소프트웨어 설치 및 제어 가이드</p>
+  </a>
+  
+  <a href="https://xlerobot.readthedocs.io/en/latest/simulation/index.html" style="padding: 1.5rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); text-decoration: none; transition: all var(--transition-base);" target="_blank">
+    <h3 style="margin: 0 0 0.5rem 0; color: var(--color-accent);"><i class="fas fa-vr-cardboard"></i> 시뮬레이션</h3>
+    <p style="margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm);\">ManiSkill 시뮬레이션 환경 시작하기</p>
+  </a>
+</div>
+
+<Callout type="success" title="시작 준비 완료!">
+  모든 단계를 순서대로 따라하시면 XLeRobot을 이용한 가정용 로봇 실습을 성공적으로 진행할 수 있습니다!
+</Callout>
+
+## 🪧 면책 조항 🪧
+
+<Callout type="warning" title="중요">
+  이 저장소를 기반으로 XLeRobot을 구축, 구매 또는 개발하는 경우, 귀하 또는 다른 사람에게 발생하는 모든 물리적 및 정신적 손상에 대해 전적으로 책임을 집니다.
+</Callout>
+
+---
+
+*XLeRobot 프로젝트는 지속적으로 발전하고 있습니다. 최신 업데이트는 [공식 GitHub](https://github.com/Vector-Wangel/XLeRobot)를 확인하세요.*

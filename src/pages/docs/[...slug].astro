@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
-import DocsLayout from '../../layouts/DocsLayout.astro';
+import LeRobotDocsLayout from '../../layouts/LeRobotDocsLayout.astro';
+import OtherRobotsDocsLayout from '../../layouts/OtherRobotsDocsLayout.astro';
 
 export async function getStaticPaths() {
   const docs = await getCollection('docs');
@@ -13,8 +14,12 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await entry.render();
+
+// slug에 따라 다른 레이아웃 사용
+const isOthersPage = entry.slug.includes('physical-ai/others');
+const Layout = isOthersPage ? OtherRobotsDocsLayout : LeRobotDocsLayout;
 ---
 
-<DocsLayout title={entry.data.title} description={entry.data.description}>
+<Layout title={entry.data.title} description={entry.data.description}>
   <Content />
-</DocsLayout>
+</Layout>

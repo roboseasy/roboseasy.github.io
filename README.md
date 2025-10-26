@@ -33,7 +33,7 @@ roboseasy/
 │   │
 │   ├── layouts/                 # 레이아웃 컴포넌트
 │   │   ├── Layout.astro        # 기본 페이지 레이아웃
-│   │   └── DocsLayout.astro    # 문서 전용 레이아웃
+│   │   └── DocsLayout.astro    # 문서 전용 레이아웃 > 사이드바
 │   │
 │   ├── pages/                   # 페이지 라우팅
 │   │   ├── index.astro         # 홈페이지
