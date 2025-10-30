@@ -179,6 +179,7 @@ export HF_USER="Your_HuggingFace_Account"
     ```bash
     # 평가 및 실행 기본 설정
     lerobot-record \
+      --policy.path=${HF_USER}/${TASK_NAME} \
       --robot.type=so101_follower \
       --robot.port=/dev/so101_follower \
       --robot.id=follower \
@@ -191,7 +192,6 @@ export HF_USER="Your_HuggingFace_Account"
       --dataset.num_episodes=50 \
       --dataset.episode_time_s=15 \
       --dataset.reset_time_s=1 \
-      --policy.path=${HF_USER}/${TASK_NAME} \
       --display_data=true
     ```
   </div>
@@ -199,6 +199,7 @@ export HF_USER="Your_HuggingFace_Account"
     ```bash
     # 평가 및 실행 시간 설정을 길게 해서 끊기지 않고 반복 작업 수행
     lerobot-record \
+        --policy.path=${HF_USER}/${TASK_NAME} \
         --robot.type=so101_follower \
         --robot.port=/dev/so101_follower \
         --robot.id=follower \
@@ -210,7 +211,6 @@ export HF_USER="Your_HuggingFace_Account"
         --dataset.single_task=eval_${TASK_NAME} \
         --dataset.episode_time_s=100_000 \
         --dataset.reset_time_s=1 \
-        --policy.path=${HF_USER}/${TASK_NAME} \
         --display_data=true 
     ```
   </div>
