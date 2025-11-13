@@ -103,7 +103,7 @@ export HF_USER="Your_HuggingFace_Account"
       --job_name=smolvla_so101 \
       --output_dir=outputs/train/smolvla_so101/${TASK_NAME} \
       --wandb.enable=true \
-      --rename_map='{"observation.images.top": "observation.images.camera1", "observation.images.wrist": "observation.images.camera2"}
+      --rename_map='{"observation.images.top": "observation.images.camera1", "observation.images.wrist": "observation.images.camera2"}'
 
     ```
   </div>
@@ -123,7 +123,7 @@ export HF_USER="Your_HuggingFace_Account"
       --steps=100_000 \
       --save_checkpoint=true \
       --save_freq=10_000 \
-      --rename_map='{"observation.images.top": "observation.images.camera1", "observation.images.wrist": "observation.images.camera2"}
+      --rename_map='{"observation.images.top": "observation.images.camera1", "observation.images.wrist": "observation.images.camera2"}'
 
     ```
   </div>
