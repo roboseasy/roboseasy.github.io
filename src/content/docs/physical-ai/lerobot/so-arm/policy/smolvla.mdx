@@ -167,12 +167,12 @@ export HF_USER="Your_HuggingFace_Account"
           camera1: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
           camera2: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
       }' \
+      --policy.path=${HF_USER}/smolvla_${TASK_NAME} \
       --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
       --dataset.single_task="Pick up the red pen and place it in the pencil case" \
       --dataset.num_episodes=10 \
       --dataset.episode_time_s=15 \
-      --dataset.reset_time_s=1 \
-      --policy.path=${HF_USER}/smolvla_${TASK_NAME} \
+      --dataset.reset_time_s=1 \      
       --display_data=true 
     ```
   </div>
@@ -187,14 +187,13 @@ export HF_USER="Your_HuggingFace_Account"
           camera1: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 25},
           camera2: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 25},
       }' \
+      --policy.path=${HF_USER}/smolvla_${TASK_NAME} \
       --dataset.repo_id=${HF_USER}/eval_${TASK_NAME} \
       --dataset.single_task="Pick up the red pen and place it in the pencil case" \
       --dataset.num_episodes=1 \
       --dataset.episode_time_s=10000 \
-      --dataset.reset_time_s=1 \
-      --policy.path=${HF_USER}/smolvla_${TASK_NAME} \
-      --display_data=true \
-      --rename_map='{"observation.images.top": "observation.images.camera1", "observation.images.wrist": "observation.images.camera2"}'
+      --dataset.reset_time_s=1 \      
+      --display_data=true 
     ```
   </div>
 </Tabs>
