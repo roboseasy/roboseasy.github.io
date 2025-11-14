@@ -173,7 +173,8 @@ export HF_USER="Your_HuggingFace_Account"
       --dataset.episode_time_s=15 \
       --dataset.reset_time_s=1 \
       --policy.path=${HF_USER}/smolvla_${TASK_NAME} \
-      --display_data=true
+      --display_data=true \
+      --rename_map='{"observation.images.top": "observation.images.camera1", "observation.images.wrist": "observation.images.camera2"}'
     ```
   </div>
   <div class="tab-panel">
@@ -193,7 +194,8 @@ export HF_USER="Your_HuggingFace_Account"
       --dataset.episode_time_s=10000 \
       --dataset.reset_time_s=1 \
       --policy.path=${HF_USER}/smolvla_${TASK_NAME} \
-      --display_data=true
+      --display_data=true \
+      --rename_map='{"observation.images.top": "observation.images.camera1", "observation.images.wrist": "observation.images.camera2"}'
     ```
   </div>
 </Tabs>
